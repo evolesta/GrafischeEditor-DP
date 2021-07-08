@@ -10,12 +10,11 @@ using System.Windows.Forms;
 
 namespace GrafischeEditor_DP
 {
-    public partial class Form1 : Form
+    public partial class Tekening : Form
     {
-        public Form1()
+        public Tekening()
         {
             InitializeComponent();
         }
-
     }
 }
