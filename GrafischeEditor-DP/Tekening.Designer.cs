@@ -36,10 +36,10 @@ namespace GrafischeEditor_DP
             this.BestandOpslaan = new System.Windows.Forms.ToolStripMenuItem();
             this.BestandOpslaanAls = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.ButtonEllipse = new System.Windows.Forms.Button();
-            this.ButtonSquare = new System.Windows.Forms.Button();
             this.ButtonPointer = new System.Windows.Forms.Button();
+            this.ButtonSquare = new System.Windows.Forms.Button();
+            this.ButtonEllipse = new System.Windows.Forms.Button();
+            this.DrawPanel = new System.Windows.Forms.Panel();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -100,23 +100,16 @@ namespace GrafischeEditor_DP
             this.panel1.Size = new System.Drawing.Size(115, 602);
             this.panel1.TabIndex = 1;
             // 
-            // flowLayoutPanel1
+            // ButtonPointer
             // 
-            this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(121, 27);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(911, 602);
-            this.flowLayoutPanel1.TabIndex = 2;
-            // 
-            // ButtonEllipse
-            // 
-            this.ButtonEllipse.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonEllipse.Location = new System.Drawing.Point(11, 83);
-            this.ButtonEllipse.Name = "ButtonEllipse";
-            this.ButtonEllipse.Size = new System.Drawing.Size(90, 65);
-            this.ButtonEllipse.TabIndex = 0;
-            this.ButtonEllipse.Text = "m";
-            this.ButtonEllipse.UseVisualStyleBackColor = true;
+            this.ButtonPointer.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ButtonPointer.Location = new System.Drawing.Point(11, 12);
+            this.ButtonPointer.Name = "ButtonPointer";
+            this.ButtonPointer.Size = new System.Drawing.Size(90, 65);
+            this.ButtonPointer.TabIndex = 2;
+            this.ButtonPointer.Text = "8";
+            this.ButtonPointer.UseVisualStyleBackColor = true;
+            this.ButtonPointer.Click += new System.EventHandler(this.ButtonPointer_Click);
             // 
             // ButtonSquare
             // 
@@ -127,23 +120,37 @@ namespace GrafischeEditor_DP
             this.ButtonSquare.TabIndex = 1;
             this.ButtonSquare.Text = "o";
             this.ButtonSquare.UseVisualStyleBackColor = true;
+            this.ButtonSquare.Click += new System.EventHandler(this.ButtonSquare_Click);
             // 
-            // ButtonPointer
+            // ButtonEllipse
             // 
-            this.ButtonPointer.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonPointer.Location = new System.Drawing.Point(11, 12);
-            this.ButtonPointer.Name = "ButtonPointer";
-            this.ButtonPointer.Size = new System.Drawing.Size(90, 65);
-            this.ButtonPointer.TabIndex = 2;
-            this.ButtonPointer.Text = "8";
-            this.ButtonPointer.UseVisualStyleBackColor = true;
+            this.ButtonEllipse.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ButtonEllipse.Location = new System.Drawing.Point(11, 83);
+            this.ButtonEllipse.Name = "ButtonEllipse";
+            this.ButtonEllipse.Size = new System.Drawing.Size(90, 65);
+            this.ButtonEllipse.TabIndex = 0;
+            this.ButtonEllipse.Text = "m";
+            this.ButtonEllipse.UseVisualStyleBackColor = true;
+            this.ButtonEllipse.Click += new System.EventHandler(this.ButtonEllipse_Click);
+            // 
+            // DrawPanel
+            // 
+            this.DrawPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.DrawPanel.Location = new System.Drawing.Point(121, 27);
+            this.DrawPanel.Name = "DrawPanel";
+            this.DrawPanel.Size = new System.Drawing.Size(911, 602);
+            this.DrawPanel.TabIndex = 2;
+            this.DrawPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPanel_Paint);
+            this.DrawPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseDown);
+            this.DrawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseMove);
+            this.DrawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseUp);
             // 
             // Tekening
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1044, 641);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.DrawPanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.MenuStrip);
             this.MainMenuStrip = this.MenuStrip;
@@ -166,9 +173,9 @@ namespace GrafischeEditor_DP
         private System.Windows.Forms.ToolStripMenuItem BestandOpslaan;
         private System.Windows.Forms.ToolStripMenuItem BestandOpslaanAls;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button ButtonPointer;
         private System.Windows.Forms.Button ButtonSquare;
         private System.Windows.Forms.Button ButtonEllipse;
+        private System.Windows.Forms.Panel DrawPanel;
     }
 }
