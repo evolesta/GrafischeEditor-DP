@@ -15,11 +15,13 @@ namespace GrafischeEditor_DP
         private enum States { Default, Square, Ellipse } // bepaalt de tekenoptie adhv constanten
         private States TekenState = States.Default; // zet standaard state
 
-        Rectangle rectangle;
+        Rectangle rectangle; // tijdelijk figuur
         Point startpos; // start positie X Y rechthoek
         Point endpos; // eind positie X Y rechthoek
 
         bool IsMouseDown = false; // bool wanneer muisknop vastgehouden wordt
+
+        Controller controller = new Controller(); // controller object
 
         public Tekening()
         {
@@ -73,16 +75,18 @@ namespace GrafischeEditor_DP
             {
                 endpos = e.Location;
                 IsMouseDown = false;
+
+                controller.nieuwFiguur(GetRectangle(), Figuur.soortenFiguren.Square); // maak nieuw figuur object aan
             }
         }
 
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
-            // Print het figuur
+            // Print het figuur en maak nieuw object aan
             switch (TekenState)
             {
                 case States.Square:
-                    e.Graphics.DrawRectangle(Pens.Black, GetRectangle());
+                    e.Graphics.DrawRectangle(Pens.Black, rectangle);
                     break;
 
                 case States.Ellipse:
@@ -91,7 +95,7 @@ namespace GrafischeEditor_DP
             }
         }
 
-        // Genereer het figuur
+        // Bereken de plaatsing van het figuur adhv start & eind x-y posities
         private Rectangle GetRectangle()
         {
             rectangle = new Rectangle();

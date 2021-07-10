@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace GrafischeEditor_DP
@@ -9,16 +10,15 @@ namespace GrafischeEditor_DP
     class Controller
     {
         // Variabelen declareren
-        private List<String> Figuren = new List<String>();
+        private List<Figuur> Figuren = new List<Figuur>(); // list van Figuur objecten
 
-        private void verwerkFiguur(double x, double y, int breedte, int hoogte)
+        // maak nieuw figuur object aan en voeg toe aan de list
+        public void nieuwFiguur(Rectangle rectangle, Figuur.soortenFiguren soortFiguur)
         {
-            // sla x en y coordinaten op en de breedte en hoogte in pixels
+            Figuren.Add(new Figuur("figuur" + Figuren.Count+1, rectangle, soortFiguur, false));
         }
 
-        private void toonFiguren()
-        {
-            // print alle figuren op het scherm
-        }
+        // Geeft de actuele lijst met figuren terug
+        public List<Figuur> getFiguren() { return Figuren; }
     }
 }
