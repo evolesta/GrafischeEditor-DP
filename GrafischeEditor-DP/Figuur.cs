@@ -28,6 +28,6 @@ namespace GrafischeEditor_DP
         public string Naam { get => naam; set => naam = value; }
         public Rectangle Positie { get => positie; set => positie = value; }
         public bool Selectie { get => selectie; set => selectie = value; }
-        private soortenFiguren Type { get => type; set => type = value; }
+        public soortenFiguren Type { get => type; set => type = value; }
     }
 }

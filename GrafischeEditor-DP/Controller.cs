@@ -15,7 +15,8 @@ namespace GrafischeEditor_DP
         // maak nieuw figuur object aan en voeg toe aan de list
         public void nieuwFiguur(Rectangle rectangle, Figuur.soortenFiguren soortFiguur)
         {
-            Figuren.Add(new Figuur("figuur" + Figuren.Count+1, rectangle, soortFiguur, false));
+            int counter = Figuren.Count + 1; // genereer counter voor unieke object naam
+            Figuren.Add(new Figuur("figuur" + counter, rectangle, soortFiguur, false));
         }
 
         // Geeft de actuele lijst met figuren terug

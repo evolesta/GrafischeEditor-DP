@@ -12,8 +12,7 @@ namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
-        private enum States { Default, Square, Ellipse } // bepaalt de tekenoptie adhv constanten
-        private States TekenState = States.Default; // zet standaard state
+        Figuur.soortenFiguren soortFiguur; // defineer het type figuur
 
         Rectangle rectangle; // tijdelijk figuur
         Point startpos; // start positie X Y rechthoek
@@ -28,69 +27,17 @@ namespace GrafischeEditor_DP
             InitializeComponent();
         }
 
-        // optie op ellipsen te tekenen
-        private void ButtonEllipse_Click(object sender, EventArgs e)
+        // METHODEN -- //
+        // Methode voor het printen van een figuur op het scherm
+        private void Draw(Figuur.soortenFiguren type, Rectangle positie, PaintEventArgs e)
         {
-            // verander naar tekencursor & state
-            TekenState = States.Ellipse;
-            Cursor = Cursors.Cross;
-        }
-
-        // optie om squares te tekenen
-        private void ButtonSquare_Click(object sender, EventArgs e)
-        {
-            TekenState = States.Square;
-            Cursor = Cursors.Cross;
-        }
-
-        // opties voor standaard pointer, voor selecties e.d.
-        private void ButtonPointer_Click(object sender, EventArgs e)
-        {
-            TekenState = States.Default;
-            Cursor = Cursors.Default;
-        }
-
-        // aangeroepen als muisknop ingehouden wordt
-        private void DrawPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-            IsMouseDown = true;
-            startpos = e.Location; // bewaar X Y positie startpunt
-        }
-
-        private void DrawPanel_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (IsMouseDown) // alleen uitvoeren wanneer muis ingehouden wordt
+            switch (type)
             {
-                endpos = e.Location; 
-                Refresh(); 
-            }
-        }
-
-        // aangeroepen als muisknop losgelaten wordt
-        private void DrawPanel_MouseUp(object sender, MouseEventArgs e)
-        {
-            IsMouseDown = false; // 
-
-            if (IsMouseDown)
-            {
-                endpos = e.Location;
-                IsMouseDown = false;
-
-                controller.nieuwFiguur(GetRectangle(), Figuur.soortenFiguren.Square); // maak nieuw figuur object aan
-            }
-        }
-
-        private void DrawPanel_Paint(object sender, PaintEventArgs e)
-        {
-            // Print het figuur en maak nieuw object aan
-            switch (TekenState)
-            {
-                case States.Square:
-                    e.Graphics.DrawRectangle(Pens.Black, rectangle);
+                case Figuur.soortenFiguren.Square:
+                    e.Graphics.DrawRectangle(Pens.Black, positie);
                     break;
-
-                case States.Ellipse:
-                    e.Graphics.DrawEllipse(Pens.Black, GetRectangle());
+                case Figuur.soortenFiguren.Ellipse:
+                    e.Graphics.DrawEllipse(Pens.Black, positie);
                     break;
             }
         }
@@ -104,6 +51,93 @@ namespace GrafischeEditor_DP
             rectangle.Width = Math.Abs(startpos.X - endpos.X);
             rectangle.Height = Math.Abs(startpos.Y - endpos.Y);
             return rectangle;
+        }
+
+        // optie op ellipsen te tekenen
+        private void ButtonEllipse_Click(object sender, EventArgs e)
+        {
+            // verander naar tekencursor & state
+            soortFiguur = Figuur.soortenFiguren.Ellipse;
+            Cursor = Cursors.Cross;
+        }
+
+        // optie om squares te tekenen
+        private void ButtonSquare_Click(object sender, EventArgs e)
+        {
+            soortFiguur = Figuur.soortenFiguren.Square;
+            Cursor = Cursors.Cross;
+        }
+
+        // opties voor standaard pointer, voor selecties e.d.
+        private void ButtonPointer_Click(object sender, EventArgs e)
+        {
+            soortFiguur = Figuur.soortenFiguren.Default;
+            Cursor = Cursors.Default;
+        }
+
+        // aangeroepen als muisknop ingehouden wordt
+        private void DrawPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            IsMouseDown = true;
+            startpos = e.Location; // bewaar X Y positie startpunt
+        }
+
+        private void DrawPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (IsMouseDown) // alleen uitvoeren wanneer muisknop ingehouden wordt
+            {
+                endpos = e.Location; // eindpositie opslaan in pointer
+                Refresh(); 
+            }
+        }
+
+        // aangeroepen als muisknop losgelaten wordt
+        private void DrawPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            IsMouseDown = false;  
+
+            if (IsMouseDown)
+            {
+                endpos = e.Location;
+                IsMouseDown = false;
+            }
+
+            controller.nieuwFiguur(GetRectangle(), soortFiguur); // maak nieuw figuur aan
+            Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
+        }
+
+        private void DrawPanel_Click(object sender, MouseEventArgs e)
+        {
+            // Alleen uitvoeren als de 'muis' state actief is (geen teken states)
+            if (soortFiguur == Figuur.soortenFiguren.Default)
+            {
+                startpos = e.Location; // leg nieuwe coordinaten vast voor selectie
+
+                // controleren of een figuur op de geklikte positie bestaat
+                foreach (var figuur in controller.getFiguren())
+                {
+                    // controleren of er zich een figuur bevindt in de opgeslagen coordinaten
+                    if (figuur.Positie.Contains(startpos))
+                    {
+                        MessageBox.Show("test");
+                    }
+                }
+            }
+        }
+
+        private void DrawPanel_Paint(object sender, PaintEventArgs e)
+        {
+            // verkrijg lijst met n figuren en print ieder figuur op het scherm
+            foreach (var figuur in controller.getFiguren())
+            {
+                Draw(figuur.Type, figuur.Positie, e);
+            }
+
+            // wanneer er nog getekend wordt, teken preview
+            if (IsMouseDown)
+            {
+                Draw(soortFiguur, GetRectangle(), e);
+            }
         }
     }
 }
