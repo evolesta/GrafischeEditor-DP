@@ -40,6 +40,7 @@ namespace GrafischeEditor_DP
             this.ButtonSquare = new System.Windows.Forms.Button();
             this.ButtonEllipse = new System.Windows.Forms.Button();
             this.DrawPanel = new System.Windows.Forms.Panel();
+            this.ButtonRemove = new System.Windows.Forms.Button();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -92,6 +93,7 @@ namespace GrafischeEditor_DP
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.ButtonRemove);
             this.panel1.Controls.Add(this.ButtonPointer);
             this.panel1.Controls.Add(this.ButtonSquare);
             this.panel1.Controls.Add(this.ButtonEllipse);
@@ -146,6 +148,17 @@ namespace GrafischeEditor_DP
             this.DrawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseMove);
             this.DrawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseUp);
             // 
+            // ButtonRemove
+            // 
+            this.ButtonRemove.Font = new System.Drawing.Font("Wingdings 2", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ButtonRemove.Location = new System.Drawing.Point(11, 225);
+            this.ButtonRemove.Name = "ButtonRemove";
+            this.ButtonRemove.Size = new System.Drawing.Size(90, 65);
+            this.ButtonRemove.TabIndex = 3;
+            this.ButtonRemove.Text = "3";
+            this.ButtonRemove.UseVisualStyleBackColor = true;
+            this.ButtonRemove.Click += new System.EventHandler(this.ButtonRemove_Click);
+            // 
             // Tekening
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -178,5 +191,6 @@ namespace GrafischeEditor_DP
         private System.Windows.Forms.Button ButtonSquare;
         private System.Windows.Forms.Button ButtonEllipse;
         private System.Windows.Forms.Panel DrawPanel;
+        private System.Windows.Forms.Button ButtonRemove;
     }
 }
