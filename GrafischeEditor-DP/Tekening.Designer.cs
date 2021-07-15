@@ -36,11 +36,12 @@ namespace GrafischeEditor_DP
             this.BestandOpslaan = new System.Windows.Forms.ToolStripMenuItem();
             this.BestandOpslaanAls = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ButtonRemove = new System.Windows.Forms.Button();
             this.ButtonPointer = new System.Windows.Forms.Button();
             this.ButtonSquare = new System.Windows.Forms.Button();
             this.ButtonEllipse = new System.Windows.Forms.Button();
             this.DrawPanel = new System.Windows.Forms.Panel();
-            this.ButtonRemove = new System.Windows.Forms.Button();
+            this.ButtonResize = new System.Windows.Forms.Button();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -93,6 +94,7 @@ namespace GrafischeEditor_DP
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.ButtonResize);
             this.panel1.Controls.Add(this.ButtonRemove);
             this.panel1.Controls.Add(this.ButtonPointer);
             this.panel1.Controls.Add(this.ButtonSquare);
@@ -101,6 +103,17 @@ namespace GrafischeEditor_DP
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(115, 602);
             this.panel1.TabIndex = 1;
+            // 
+            // ButtonRemove
+            // 
+            this.ButtonRemove.Font = new System.Drawing.Font("Wingdings 2", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ButtonRemove.Location = new System.Drawing.Point(11, 298);
+            this.ButtonRemove.Name = "ButtonRemove";
+            this.ButtonRemove.Size = new System.Drawing.Size(90, 65);
+            this.ButtonRemove.TabIndex = 3;
+            this.ButtonRemove.Text = "3";
+            this.ButtonRemove.UseVisualStyleBackColor = true;
+            this.ButtonRemove.Click += new System.EventHandler(this.ButtonRemove_Click);
             // 
             // ButtonPointer
             // 
@@ -143,21 +156,20 @@ namespace GrafischeEditor_DP
             this.DrawPanel.Size = new System.Drawing.Size(911, 602);
             this.DrawPanel.TabIndex = 2;
             this.DrawPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPanel_Paint);
-            this.DrawPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_Click);
             this.DrawPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseDown);
             this.DrawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseMove);
             this.DrawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseUp);
             // 
-            // ButtonRemove
+            // ButtonResize
             // 
-            this.ButtonRemove.Font = new System.Drawing.Font("Wingdings 2", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonRemove.Location = new System.Drawing.Point(11, 225);
-            this.ButtonRemove.Name = "ButtonRemove";
-            this.ButtonRemove.Size = new System.Drawing.Size(90, 65);
-            this.ButtonRemove.TabIndex = 3;
-            this.ButtonRemove.Text = "3";
-            this.ButtonRemove.UseVisualStyleBackColor = true;
-            this.ButtonRemove.Click += new System.EventHandler(this.ButtonRemove_Click);
+            this.ButtonResize.Font = new System.Drawing.Font("Webdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ButtonResize.Location = new System.Drawing.Point(11, 227);
+            this.ButtonResize.Name = "ButtonResize";
+            this.ButtonResize.Size = new System.Drawing.Size(90, 65);
+            this.ButtonResize.TabIndex = 4;
+            this.ButtonResize.Text = "q";
+            this.ButtonResize.UseVisualStyleBackColor = true;
+            this.ButtonResize.Click += new System.EventHandler(this.ButtonResize_Click);
             // 
             // Tekening
             // 
@@ -192,5 +204,6 @@ namespace GrafischeEditor_DP
         private System.Windows.Forms.Button ButtonEllipse;
         private System.Windows.Forms.Panel DrawPanel;
         private System.Windows.Forms.Button ButtonRemove;
+        private System.Windows.Forms.Button ButtonResize;
     }
 }

@@ -13,21 +13,21 @@ namespace GrafischeEditor_DP
         private string naam; // naam van het figuur
         private Rectangle positie; // x-y as en groote figuur
         private bool selectie; // of figuur geselecteerd is
-        public enum soortenFiguren { Default, Square, Ellipse } // enum voor soorten figuren
-        private soortenFiguren type = soortenFiguren.Default; // bepaald soort figuur
+        public enum TekenModus { Default, Resize, Square, Ellipse } // enum voor soorten figuren
+        private TekenModus modus = TekenModus.Default; // bepaald soort figuur
 
-        public Figuur(string naam, Rectangle positie, soortenFiguren type, bool selectie)
+        public Figuur(string naam, Rectangle positie, TekenModus modus, bool selectie)
         {
             this.naam = naam;
             this.positie = positie;
             this.selectie = selectie;
-            this.type = type;
+            this.modus = modus;
         }
 
         // getters en setters
         public string Naam { get => naam; set => naam = value; }
         public Rectangle Positie { get => positie; set => positie = value; }
         public bool Selectie { get => selectie; set => selectie = value; }
-        public soortenFiguren Type { get => type; set => type = value; }
+        public TekenModus Type { get => modus; set => modus = value; }
     }
 }

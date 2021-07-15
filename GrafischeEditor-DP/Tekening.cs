@@ -12,7 +12,7 @@ namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
-        Figuur.soortenFiguren soortFiguur; // defineer het type figuur
+        Figuur.TekenModus soortFiguur; // defineer het type figuur
 
         Rectangle rectangle; // tijdelijk figuur
         Point startpos; // start positie X Y rechthoek
@@ -20,8 +20,10 @@ namespace GrafischeEditor_DP
 
         bool IsMouseDown = false; // bool wanneer muisknop vastgehouden wordt
         bool IsMoving = false; // bool wanneer een bestaand figuur verplaatst wordt
+        bool IsResizing = false; // bool wanneer een bestaand figuur van grootte veranderd wordt
         int ModifyingFigureIndex; // index waarde van aan te passen object bij resizing + moving
         Rectangle ModifyingRectangle; // rectangle die verplaatst of vergroot wordt
+        Figuur.TekenModus ModifyingFigureType;
 
         Controller controller = new Controller(); // controller object
 
@@ -32,16 +34,16 @@ namespace GrafischeEditor_DP
 
         // METHODEN -- //
         // Methode voor het printen van een figuur op het scherm
-        private void Draw(Figuur.soortenFiguren type, Rectangle positie, bool selected, PaintEventArgs e)
+        private void Draw(Figuur.TekenModus type, Rectangle positie, bool selected, PaintEventArgs e)
         {
             Pen pen = generatePen(selected); // genereer nieuwe pen
 
             switch (type)
             {
-                case Figuur.soortenFiguren.Square:
+                case Figuur.TekenModus.Square:
                     e.Graphics.DrawRectangle(pen, positie);
                     break;
-                case Figuur.soortenFiguren.Ellipse:
+                case Figuur.TekenModus.Ellipse:
                     e.Graphics.DrawEllipse(pen, positie);
                     break;
             }
@@ -83,28 +85,66 @@ namespace GrafischeEditor_DP
             return rectangle;
         }
 
+        private Rectangle ResizeRectangle(Rectangle currRectangle)
+        {
+            rectangle = new Rectangle();
+            
+            if (endpos.X < currRectangle.X) 
+            {
+                rectangle.X = endpos.X; 
+            } 
+            else
+            {
+                rectangle.X = currRectangle.X; 
+            }
+
+            if (endpos.Y < currRectangle.Y) 
+            { 
+                rectangle.Y = endpos.Y;
+            }
+            else
+            {
+                rectangle.Y = currRectangle.Y;
+            }
+
+            rectangle.Width = Math.Abs(endpos.X - currRectangle.X);
+            rectangle.Height = Math.Abs(endpos.Y - currRectangle.Y);
+            return rectangle;
+        }
+
         // -- Drawpanel mouse actions
 
         // optie op ellipsen te tekenen
         private void ButtonEllipse_Click(object sender, EventArgs e)
         {
             // verander naar tekencursor & state
-            soortFiguur = Figuur.soortenFiguren.Ellipse;
+            soortFiguur = Figuur.TekenModus.Ellipse;
             Cursor = Cursors.Cross;
         }
 
         // optie om squares te tekenen
         private void ButtonSquare_Click(object sender, EventArgs e)
         {
-            soortFiguur = Figuur.soortenFiguren.Square;
+            soortFiguur = Figuur.TekenModus.Square;
             Cursor = Cursors.Cross;
         }
 
         // opties voor standaard pointer, voor selecties e.d.
         private void ButtonPointer_Click(object sender, EventArgs e)
         {
-            soortFiguur = Figuur.soortenFiguren.Default;
+            soortFiguur = Figuur.TekenModus.Default;
             Cursor = Cursors.Default;
+        }
+
+        private void ButtonRemove_Click(object sender, EventArgs e)
+        {
+            // to do
+        }
+
+        private void ButtonResize_Click(object sender, EventArgs e)
+        {
+            soortFiguur = Figuur.TekenModus.Resize;
+            Cursor = Cursors.SizeNWSE;
         }
 
         // aangeroepen als muisknop ingehouden wordt
@@ -113,21 +153,40 @@ namespace GrafischeEditor_DP
             IsMouseDown = true;
             startpos = e.Location; // bewaar X Y positie startpunt
 
-            foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
+            switch (soortFiguur)
             {
-                // controleren of figuur zich in muispositie bevindt
-                if (figuur.Positie.Contains(e.Location))
-                {
-                    IsMoving = true; // zet boolean op beweegmodus
-                    ModifyingFigureIndex = controller.getFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
-                    ModifyingRectangle = controller.getFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
-                }
+                case Figuur.TekenModus.Default:
+                    foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
+                    {
+                        // controleren of figuur zich in muispositie bevindt en de state default is
+                        if (figuur.Positie.Contains(startpos))
+                        {
+                            IsMoving = true; // zet boolean op beweegmodus
+                            ModifyingFigureIndex = controller.getFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
+                            ModifyingRectangle = controller.getFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.getFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                        }
+                    }
+                    break;
+                case Figuur.TekenModus.Resize:
+                    foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
+                    {
+                        // controleren of figuur zich in muispositie bevindt en de state default is
+                        if (figuur.Positie.Contains(startpos))
+                        {
+                            IsResizing = true; // zet boolean actief resizing
+                            ModifyingFigureIndex = controller.getFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
+                            ModifyingRectangle = controller.getFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.getFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                        }
+                    }
+                    break;
             }
         }
 
         private void DrawPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (IsMouseDown || IsMoving) // alleen uitvoeren wanneer muisknop ingehouden wordt
+            if (IsMouseDown) // alleen uitvoeren wanneer muisknop ingehouden wordt
             {
                 endpos = e.Location; // eindpositie opslaan in pointer
                 Refresh(); 
@@ -137,45 +196,25 @@ namespace GrafischeEditor_DP
         // aangeroepen als muisknop losgelaten wordt
         private void DrawPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            IsMouseDown = false;  
-
-            if (IsMouseDown)
-            {
-                endpos = e.Location;
-                IsMouseDown = false;
-            }
+            IsMouseDown = false;
+            endpos = e.Location;
 
             if (IsMoving)
             {
-                endpos = e.Location;
                 IsMoving = false;
                 controller.wijzigFiguur(MoveRectangle(ModifyingRectangle), ModifyingFigureIndex); // wijzig huidig object
             }
-            else
+            else if (IsResizing)
+            {
+                IsResizing = false;
+                controller.wijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
+            }
+            else if (soortFiguur != Figuur.TekenModus.Default && soortFiguur != Figuur.TekenModus.Resize) // sla figuur alleen op in een tekenstate (square of ellipse)
             {
                 controller.nieuwFiguur(GetRectangle(), soortFiguur); // maak nieuw figuur aan
             }
            
             Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
-        }
-
-        private void DrawPanel_Click(object sender, MouseEventArgs e)
-        {
-            // Alleen uitvoeren als de 'muis' state actief is (geen teken states)
-            if (soortFiguur == Figuur.soortenFiguren.Default)
-            {
-                startpos = e.Location; // leg nieuwe coordinaten vast voor selectie
-
-                foreach (var figuur in controller.getFiguren())
-                {
-                    // controleren of er zich een figuur bevindt in de opgeslagen coordinate
-                    if (figuur.Positie.Contains(startpos))
-                    {
-                        int index = controller.getFiguren().IndexOf(figuur); // verkrijg obj index van list
-                        controller.MaakSelectie(index); // pas selectie in object aan
-                    }
-                }
-            }
         }
 
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
@@ -194,22 +233,13 @@ namespace GrafischeEditor_DP
 
             if (IsMoving)
             {
-                Draw(Figuur.soortenFiguren.Square, MoveRectangle(ModifyingRectangle), true, e);
+                Draw(ModifyingFigureType, MoveRectangle(ModifyingRectangle), true, e);
             }
-        }
 
-        private void ButtonRemove_Click(object sender, EventArgs e)
-        {
-            // verwijder ieder geselecteerd object uit de controlle klasse
-            foreach (var figuur in controller.getFiguren().ToList())
+            if (IsResizing)
             {
-                if (figuur.Selectie) // verwijder alleen de geselecteerde objecten
-                {
-                    int index = controller.getFiguren().IndexOf(figuur); // verkrijg index uit list
-                    controller.verwijderFiguur(index); // verwijder object uit controller list
-                }
+                Draw(ModifyingFigureType, ResizeRectangle(ModifyingRectangle), true, e);
             }
-            Refresh(); // repaint the drawing
         }
     }
 }
