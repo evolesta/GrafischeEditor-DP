@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
-        Figuur.TekenModus soortFiguur; // defineer het type figuur
+        Figuur.TekenModus HuidigeModus; // defineer het type figuur
 
         Rectangle rectangle; // tijdelijk figuur
         Point startpos; // start positie X Y rechthoek
@@ -21,7 +16,7 @@ namespace GrafischeEditor_DP
         bool IsMouseDown = false; // bool wanneer muisknop vastgehouden wordt
         bool IsMoving = false; // bool wanneer een bestaand figuur verplaatst wordt
         bool IsResizing = false; // bool wanneer een bestaand figuur van grootte veranderd wordt
-        int ModifyingFigureIndex; // index waarde van aan te passen object bij resizing + moving
+        int ModifyingFigureIndex = -1; // index waarde van aan te passen object bij resizing + moving
         Rectangle ModifyingRectangle; // rectangle die verplaatst of vergroot wordt
         Figuur.TekenModus ModifyingFigureType;
 
@@ -118,21 +113,21 @@ namespace GrafischeEditor_DP
         private void ButtonEllipse_Click(object sender, EventArgs e)
         {
             // verander naar tekencursor & state
-            soortFiguur = Figuur.TekenModus.Ellipse;
+            HuidigeModus = Figuur.TekenModus.Ellipse;
             Cursor = Cursors.Cross;
         }
 
         // optie om squares te tekenen
         private void ButtonSquare_Click(object sender, EventArgs e)
         {
-            soortFiguur = Figuur.TekenModus.Square;
+            HuidigeModus = Figuur.TekenModus.Square;
             Cursor = Cursors.Cross;
         }
 
         // opties voor standaard pointer, voor selecties e.d.
         private void ButtonPointer_Click(object sender, EventArgs e)
         {
-            soortFiguur = Figuur.TekenModus.Default;
+            HuidigeModus = Figuur.TekenModus.Select;
             Cursor = Cursors.Default;
         }
 
@@ -143,7 +138,7 @@ namespace GrafischeEditor_DP
 
         private void ButtonResize_Click(object sender, EventArgs e)
         {
-            soortFiguur = Figuur.TekenModus.Resize;
+            HuidigeModus = Figuur.TekenModus.Resize;
             Cursor = Cursors.SizeNWSE;
         }
 
@@ -153,12 +148,12 @@ namespace GrafischeEditor_DP
             IsMouseDown = true;
             startpos = e.Location; // bewaar X Y positie startpunt
 
-            switch (soortFiguur)
+            switch (HuidigeModus)
             {
-                case Figuur.TekenModus.Default:
+                case Figuur.TekenModus.Select:
                     foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
                     {
-                        // controleren of figuur zich in muispositie bevindt en de state default is
+                        // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsMoving = true; // zet boolean op beweegmodus
@@ -189,7 +184,7 @@ namespace GrafischeEditor_DP
             if (IsMouseDown) // alleen uitvoeren wanneer muisknop ingehouden wordt
             {
                 endpos = e.Location; // eindpositie opslaan in pointer
-                Refresh(); 
+                Refresh();
             }
         }
 
@@ -198,10 +193,10 @@ namespace GrafischeEditor_DP
         {
             IsMouseDown = false;
             endpos = e.Location;
+            IsMoving = false;
 
-            if (IsMoving)
+            if (ModifyingFigureIndex >= 0 && endpos != startpos )
             {
-                IsMoving = false;
                 controller.wijzigFiguur(MoveRectangle(ModifyingRectangle), ModifyingFigureIndex); // wijzig huidig object
             }
             else if (IsResizing)
@@ -209,11 +204,12 @@ namespace GrafischeEditor_DP
                 IsResizing = false;
                 controller.wijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
             }
-            else if (soortFiguur != Figuur.TekenModus.Default && soortFiguur != Figuur.TekenModus.Resize) // sla figuur alleen op in een tekenstate (square of ellipse)
+            else if (HuidigeModus != Figuur.TekenModus.Select && HuidigeModus != Figuur.TekenModus.Resize) // sla figuur alleen op in een tekenstate (square of ellipse)
             {
-                controller.nieuwFiguur(GetRectangle(), soortFiguur); // maak nieuw figuur aan
+                controller.nieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
             }
-           
+
+            ModifyingFigureIndex = -1;
             Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
         }
 
@@ -222,13 +218,13 @@ namespace GrafischeEditor_DP
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
             foreach (var figuur in controller.getFiguren())
             {
-                Draw(figuur.Type, figuur.Positie, figuur.Selectie, e);
+                Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
             }
 
             // wanneer er nog getekend wordt, teken preview
             if (IsMouseDown)
             {
-                Draw(soortFiguur, GetRectangle(), false, e);
+                Draw(HuidigeModus, GetRectangle(), false, e);
             }
 
             if (IsMoving)

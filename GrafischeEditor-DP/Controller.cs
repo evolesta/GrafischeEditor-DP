@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace GrafischeEditor_DP
 {
@@ -40,7 +36,7 @@ namespace GrafischeEditor_DP
         public void MaakSelectie(int objIndex)
         {
             // pas boolean waarde aan in object
-            Figuren[objIndex].Selectie ^= true;
+            Figuren[objIndex].Geselecteerd ^= true;
         }
     }
 }
