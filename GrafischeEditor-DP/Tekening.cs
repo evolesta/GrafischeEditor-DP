@@ -133,7 +133,8 @@ namespace GrafischeEditor_DP
 
         private void ButtonRemove_Click(object sender, EventArgs e)
         {
-            // to do
+            HuidigeModus = Figuur.TekenModus.Verwijder;
+            Cursor = Cursors.No;
         }
 
         private void ButtonResize_Click(object sender, EventArgs e)
@@ -148,6 +149,9 @@ namespace GrafischeEditor_DP
             IsMouseDown = true;
             startpos = e.Location; // bewaar X Y positie startpunt
 
+            var huidigFiguur = controller.GetFiguren().LastOrDefault(f => f.Positie.Contains(e.Location));
+            ModifyingFigureIndex = controller.GetFiguren().IndexOf(huidigFiguur);
+
             switch (HuidigeModus)
             {
                 case Figuur.TekenModus.Select:
@@ -157,7 +161,6 @@ namespace GrafischeEditor_DP
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsMoving = true; // zet boolean op beweegmodus
-                            ModifyingFigureIndex = controller.GetFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
                             ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
                             ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
                         }
@@ -170,7 +173,6 @@ namespace GrafischeEditor_DP
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsResizing = true; // zet boolean actief resizing
-                            ModifyingFigureIndex = controller.GetFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
                             ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
                             ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
                         }
@@ -194,22 +196,34 @@ namespace GrafischeEditor_DP
             IsMouseDown = false;
             endpos = e.Location;
             IsMoving = false;
+            IsResizing = false;
 
-            if (ModifyingFigureIndex >= 0 )
+            switch (HuidigeModus)
             {
-                if(endpos == startpos)
-                    controller.WijzigSelectie(ModifyingFigureIndex);
-                else
-                    controller.WijzigFiguur(MoveRectangle(ModifyingRectangle), ModifyingFigureIndex); // wijzig huidig object
-            }
-            else if (IsResizing)
-            {
-                IsResizing = false;
-                controller.WijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
-            }
-            else if (HuidigeModus != Figuur.TekenModus.Select && HuidigeModus != Figuur.TekenModus.Resize) // sla figuur alleen op in een tekenstate (square of ellipse)
-            {
-                controller.NieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
+                case Figuur.TekenModus.Select:
+                    if (ModifyingFigureIndex >= 0)
+                    {
+                        if (endpos == startpos)
+                            controller.WijzigSelectie(ModifyingFigureIndex);
+                        else
+                            controller.WijzigFiguur(MoveRectangle(ModifyingRectangle),
+                                ModifyingFigureIndex); // wijzig huidig object
+                    }
+                    break;
+                case Figuur.TekenModus.Resize:
+                    if (ModifyingFigureIndex >= 0 && endpos != startpos)
+                        controller.WijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
+                    break;
+                case Figuur.TekenModus.Square:
+                case Figuur.TekenModus.Ellipse:
+                    controller.NieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
+                    break;
+                case Figuur.TekenModus.Verwijder:
+                    if(ModifyingFigureIndex >= 0 && endpos == startpos)
+                        controller.VerwijderFiguur(ModifyingFigureIndex);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             ModifyingFigureIndex = -1;
