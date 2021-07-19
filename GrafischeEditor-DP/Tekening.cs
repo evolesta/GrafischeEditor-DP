@@ -151,28 +151,28 @@ namespace GrafischeEditor_DP
             switch (HuidigeModus)
             {
                 case Figuur.TekenModus.Select:
-                    foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
+                    foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsMoving = true; // zet boolean op beweegmodus
-                            ModifyingFigureIndex = controller.getFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
-                            ModifyingRectangle = controller.getFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
-                            ModifyingFigureType = controller.getFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                            ModifyingFigureIndex = controller.GetFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
+                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
                         }
                     }
                     break;
                 case Figuur.TekenModus.Resize:
-                    foreach (var figuur in controller.getFiguren().ToList()) // doorloop alle figuren
+                    foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsResizing = true; // zet boolean actief resizing
-                            ModifyingFigureIndex = controller.getFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
-                            ModifyingRectangle = controller.getFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
-                            ModifyingFigureType = controller.getFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                            ModifyingFigureIndex = controller.GetFiguren().IndexOf(figuur); // verkrijg figuur index uit lijst
+                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
                         }
                     }
                     break;
@@ -195,18 +195,21 @@ namespace GrafischeEditor_DP
             endpos = e.Location;
             IsMoving = false;
 
-            if (ModifyingFigureIndex >= 0 && endpos != startpos )
+            if (ModifyingFigureIndex >= 0 )
             {
-                controller.wijzigFiguur(MoveRectangle(ModifyingRectangle), ModifyingFigureIndex); // wijzig huidig object
+                if(endpos == startpos)
+                    controller.WijzigSelectie(ModifyingFigureIndex);
+                else
+                    controller.WijzigFiguur(MoveRectangle(ModifyingRectangle), ModifyingFigureIndex); // wijzig huidig object
             }
             else if (IsResizing)
             {
                 IsResizing = false;
-                controller.wijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
+                controller.WijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
             }
             else if (HuidigeModus != Figuur.TekenModus.Select && HuidigeModus != Figuur.TekenModus.Resize) // sla figuur alleen op in een tekenstate (square of ellipse)
             {
-                controller.nieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
+                controller.NieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
             }
 
             ModifyingFigureIndex = -1;
@@ -216,7 +219,7 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in controller.getFiguren())
+            foreach (var figuur in controller.GetFiguren())
             {
                 Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
             }
