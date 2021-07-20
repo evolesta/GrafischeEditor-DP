@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace GrafischeEditor_DP
 {
@@ -12,22 +7,30 @@ namespace GrafischeEditor_DP
         // globale variabelen voor figuur
         private string naam; // naam van het figuur
         private Rectangle positie; // x-y as en groote figuur
-        private bool selectie; // of figuur geselecteerd is
-        public enum TekenModus { Default, Resize, Square, Ellipse } // enum voor soorten figuren
-        private TekenModus modus = TekenModus.Default; // bepaald soort figuur
+        private bool geselecteerd; // of figuur geselecteerd is
+        private TekenModus modus = TekenModus.Select; // bepaalt huidige modus
 
         public Figuur(string naam, Rectangle positie, TekenModus modus, bool selectie)
         {
             this.naam = naam;
             this.positie = positie;
-            this.selectie = selectie;
+            this.geselecteerd = selectie;
             this.modus = modus;
         }
 
         // getters en setters
         public string Naam { get => naam; set => naam = value; }
         public Rectangle Positie { get => positie; set => positie = value; }
-        public bool Selectie { get => selectie; set => selectie = value; }
+        public bool Geselecteerd { get => geselecteerd; set => geselecteerd = value; }
         public TekenModus Type { get => modus; set => modus = value; }
+
+        public enum TekenModus
+        {
+            Select, 
+            Resize, 
+            Square, 
+            Ellipse,
+            Verwijder
+        } // enum voor soorten figuren
     }
 }
