@@ -2,21 +2,13 @@
 
 namespace GrafischeEditor_DP
 {
-    class Figuur
+    public class Figuur
     {
         // globale variabelen voor figuur
         private string naam; // naam van het figuur
         private Rectangle positie; // x-y as en groote figuur
         private bool geselecteerd; // of figuur geselecteerd is
         private TekenModus modus = TekenModus.Select; // bepaalt huidige modus
-
-        public Figuur(string naam, Rectangle positie, TekenModus modus, bool selectie)
-        {
-            this.naam = naam;
-            this.positie = positie;
-            this.geselecteerd = selectie;
-            this.modus = modus;
-        }
 
         // getters en setters
         public string Naam { get => naam; set => naam = value; }

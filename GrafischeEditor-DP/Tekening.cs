@@ -107,6 +107,23 @@ namespace GrafischeEditor_DP
             return rectangle;
         }
 
+        // controleren of de tekening figuren bevat en vragen of deze opgeslagen moet worden
+        private void CheckIfDrawingSaved()
+        {
+            // controleren of er al figuren getekend zijn
+            if (controller.GetFiguren().Count() != 0)
+            {
+                // vraag aan gebruiker of de tekening moet worden opgeslagen
+                DialogResult dialog = MessageBox.Show("Wil je de tekening opslaan?", "Tekening opslaan", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                // opslaan bestand aanroepen bij "Ja"
+                if (dialog == DialogResult.Yes)
+                {
+                    BestandOpslaan_Click(null, null); // bestand opslaan
+                }
+            }
+        }
+
         // -- Drawpanel mouse actions
 
         // optie op ellipsen te tekenen
@@ -253,6 +270,41 @@ namespace GrafischeEditor_DP
             {
                 Draw(ModifyingFigureType, ResizeRectangle(ModifyingRectangle), true, e);
             }
+        }
+
+        private void BestandOpslaan_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog(); // nieuw SaveFile dialog object aanmaken
+            dialog.Filter = "XML files (*.xml)|*.xml"; // bestandstype definieren
+            
+            if (dialog.ShowDialog() == DialogResult.OK) // dialog openen voor opslaglocatie
+            {
+                controller.OpslaanBestand(dialog.FileName);
+            }
+        }
+
+        private void OpenBestand_Click(object sender, EventArgs e)
+        {
+            CheckIfDrawingSaved();
+
+            OpenFileDialog dialog = new OpenFileDialog(); // nieuw openFile dialog object
+            dialog.Filter = "XML files (*.xml)|*.xml";
+
+            // als dialog een succesvol pad heeft bestand daadwerkelijk openen
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                controller.OpenBestand(dialog.FileName);
+            }
+
+            Refresh(); // herteken het werkveld
+        }
+
+        private void NieuwBestand_Click(object sender, EventArgs e)
+        {
+            CheckIfDrawingSaved(); // controleren of bestaande tekening is opgeslagen
+
+            controller.ResetFiguren(); // verwijder alle figuren uit lijst
+            Refresh(); // herteken het werkveld
         }
     }
 }
