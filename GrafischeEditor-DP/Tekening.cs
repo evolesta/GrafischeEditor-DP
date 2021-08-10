@@ -21,6 +21,8 @@ namespace GrafischeEditor_DP
         Figuur.TekenModus ModifyingFigureType;
 
         Controller controller = new Controller(); // controller object
+        // genereer command invoker en receiver objecten
+        Invoker invoker = new Invoker();
 
         public Tekening()
         {
@@ -223,21 +225,24 @@ namespace GrafischeEditor_DP
                         if (endpos == startpos)
                             controller.WijzigSelectie(ModifyingFigureIndex);
                         else
-                            controller.WijzigFiguur(MoveRectangle(ModifyingRectangle),
-                                ModifyingFigureIndex); // wijzig huidig object
+                            invoker.SetCommand(new BewerkFiguurCommand(controller, MoveRectangle(ModifyingRectangle), ModifyingFigureIndex));
+                            invoker.Execute();
                     }
                     break;
                 case Figuur.TekenModus.Resize:
                     if (ModifyingFigureIndex >= 0 && endpos != startpos)
-                        controller.WijzigFiguur(ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex);
+                        invoker.SetCommand(new BewerkFiguurCommand(controller, ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex));
+                        invoker.Execute();
                     break;
                 case Figuur.TekenModus.Square:
                 case Figuur.TekenModus.Ellipse:
-                    controller.NieuwFiguur(GetRectangle(), HuidigeModus); // maak nieuw figuur aan
+                    invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), HuidigeModus));
+                    invoker.Execute();
                     break;
                 case Figuur.TekenModus.Verwijder:
-                    if(ModifyingFigureIndex >= 0 && endpos == startpos)
-                        controller.VerwijderFiguur(ModifyingFigureIndex);
+                    if (ModifyingFigureIndex >= 0 && endpos == startpos)
+                        invoker.SetCommand(new VerwijderFiguurCommand(controller, ModifyingFigureIndex));
+                        invoker.Execute();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -279,7 +284,8 @@ namespace GrafischeEditor_DP
             
             if (dialog.ShowDialog() == DialogResult.OK) // dialog openen voor opslaglocatie
             {
-                controller.OpslaanBestand(dialog.FileName);
+                invoker.SetCommand(new OpslaanBestandCommand(controller, dialog.FileName));
+                invoker.Execute();
             }
         }
 
@@ -293,7 +299,8 @@ namespace GrafischeEditor_DP
             // als dialog een succesvol pad heeft bestand daadwerkelijk openen
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                controller.OpenBestand(dialog.FileName);
+                invoker.SetCommand(new OpenBestandCommand(controller, dialog.FileName));
+                invoker.Execute();
             }
 
             Refresh(); // herteken het werkveld
@@ -305,6 +312,18 @@ namespace GrafischeEditor_DP
 
             controller.ResetFiguren(); // verwijder alle figuren uit lijst
             Refresh(); // herteken het werkveld
+        }
+
+        private void ongedaanMaken_Click(object sender, EventArgs e)
+        {
+            invoker.Undo();
+            Refresh();
+        }
+
+        private void opnieuwUitvoeren_Click(object sender, EventArgs e)
+        {
+            invoker.Redo();
+            Refresh();
         }
     }
 }

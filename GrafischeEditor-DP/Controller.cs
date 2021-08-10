@@ -3,11 +3,14 @@ using System.Drawing;
 
 namespace GrafischeEditor_DP
 {
+    /// <summary>
+    /// 'Receiver' class
+    /// </summary>
     class Controller
     {
         // Variabelen declareren
         private List<Figuur> Figuren = new List<Figuur>(); // list van Figuur objecten
-        private Bestand bestand = new Bestand(); // nieuw object voor bestand klasse
+        private Bestand bestand = new Bestand();
 
         // Geeft de actuele lijst met figuren terug
         public List<Figuur> GetFiguren() { return Figuren; }
@@ -50,17 +53,15 @@ namespace GrafischeEditor_DP
             Figuren.Clear();
         }
 
-        // open bestand
         public void OpenBestand(string Bestandspad)
         {
-            ResetFiguren(); // leeg huidige lijst
-            Figuren = bestand.Open(Bestandspad); // lees XML bestand en plaats figuren in lijst
+            ResetFiguren(); // leeg lijst met figuren
+            Figuren = bestand.Open(Bestandspad); // lees XML bestand en plaats figuren in list
         }
 
-        // sla bestand op
         public void OpslaanBestand(string Bestandspad)
         {
-            bestand.Opslaan(Bestandspad, Figuren); // sla huidige lijst op naar bestand
+            bestand.Opslaan(Bestandspad, Figuren); // sla huidige list op naar een XML bestand
         }
     }
 }

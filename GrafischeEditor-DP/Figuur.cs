@@ -2,6 +2,9 @@
 
 namespace GrafischeEditor_DP
 {
+    /// <summary>
+    /// De Figuur klasse representeert een enkel figuur die getekend kan worden
+    /// </summary>
     public class Figuur
     {
         // globale variabelen voor figuur

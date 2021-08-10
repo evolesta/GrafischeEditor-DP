@@ -35,8 +35,8 @@ namespace GrafischeEditor_DP
             this.NieuwBestand = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenBestand = new System.Windows.Forms.ToolStripMenuItem();
             this.BestandOpslaan = new System.Windows.Forms.ToolStripMenuItem();
-            this.bewerkenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ongedaanMakenCTRLYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Bewerken = new System.Windows.Forms.ToolStripMenuItem();
+            this.ongedaanMaken = new System.Windows.Forms.ToolStripMenuItem();
             this.opnieuwUitvoeren = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ButtonResize = new System.Windows.Forms.Button();
@@ -45,7 +45,6 @@ namespace GrafischeEditor_DP
             this.ButtonSquare = new System.Windows.Forms.Button();
             this.ButtonEllipse = new System.Windows.Forms.Button();
             this.DrawPanel = new System.Windows.Forms.Panel();
-            this.bestandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +53,7 @@ namespace GrafischeEditor_DP
             // 
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Bestand,
-            this.bewerkenToolStripMenuItem});
+            this.Bewerken});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
             this.MenuStrip.Size = new System.Drawing.Size(1044, 24);
@@ -66,8 +65,7 @@ namespace GrafischeEditor_DP
             this.Bestand.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NieuwBestand,
             this.OpenBestand,
-            this.BestandOpslaan,
-            this.bestandToolStripMenuItem});
+            this.BestandOpslaan});
             this.Bestand.Name = "Bestand";
             this.Bestand.Size = new System.Drawing.Size(61, 20);
             this.Bestand.Text = "Bestand";
@@ -75,44 +73,51 @@ namespace GrafischeEditor_DP
             // NieuwBestand
             // 
             this.NieuwBestand.Name = "NieuwBestand";
-            this.NieuwBestand.Size = new System.Drawing.Size(180, 22);
+            this.NieuwBestand.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.NieuwBestand.Size = new System.Drawing.Size(159, 22);
             this.NieuwBestand.Text = "Nieuw";
             this.NieuwBestand.Click += new System.EventHandler(this.NieuwBestand_Click);
             // 
             // OpenBestand
             // 
             this.OpenBestand.Name = "OpenBestand";
-            this.OpenBestand.Size = new System.Drawing.Size(180, 22);
+            this.OpenBestand.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.OpenBestand.Size = new System.Drawing.Size(159, 22);
             this.OpenBestand.Text = "Openen";
             this.OpenBestand.Click += new System.EventHandler(this.OpenBestand_Click);
             // 
             // BestandOpslaan
             // 
             this.BestandOpslaan.Name = "BestandOpslaan";
-            this.BestandOpslaan.Size = new System.Drawing.Size(180, 22);
+            this.BestandOpslaan.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.BestandOpslaan.Size = new System.Drawing.Size(159, 22);
             this.BestandOpslaan.Text = "Opslaan";
             this.BestandOpslaan.Click += new System.EventHandler(this.BestandOpslaan_Click);
             // 
-            // bewerkenToolStripMenuItem
+            // Bewerken
             // 
-            this.bewerkenToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ongedaanMakenCTRLYToolStripMenuItem,
+            this.Bewerken.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ongedaanMaken,
             this.opnieuwUitvoeren});
-            this.bewerkenToolStripMenuItem.Name = "bewerkenToolStripMenuItem";
-            this.bewerkenToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-            this.bewerkenToolStripMenuItem.Text = "Bewerken";
+            this.Bewerken.Name = "Bewerken";
+            this.Bewerken.Size = new System.Drawing.Size(70, 20);
+            this.Bewerken.Text = "Bewerken";
             // 
-            // ongedaanMakenCTRLYToolStripMenuItem
+            // ongedaanMaken
             // 
-            this.ongedaanMakenCTRLYToolStripMenuItem.Name = "ongedaanMakenCTRLYToolStripMenuItem";
-            this.ongedaanMakenCTRLYToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-            this.ongedaanMakenCTRLYToolStripMenuItem.Text = "Ongedaan maken (CTRL+ Z)";
+            this.ongedaanMaken.Name = "ongedaanMaken";
+            this.ongedaanMaken.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.ongedaanMaken.Size = new System.Drawing.Size(216, 22);
+            this.ongedaanMaken.Text = "Ongedaan maken";
+            this.ongedaanMaken.Click += new System.EventHandler(this.ongedaanMaken_Click);
             // 
             // opnieuwUitvoeren
             // 
             this.opnieuwUitvoeren.Name = "opnieuwUitvoeren";
-            this.opnieuwUitvoeren.Size = new System.Drawing.Size(228, 22);
-            this.opnieuwUitvoeren.Text = "Opnieuw uitvoeren (CTRL+Y)";
+            this.opnieuwUitvoeren.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+            this.opnieuwUitvoeren.Size = new System.Drawing.Size(216, 22);
+            this.opnieuwUitvoeren.Text = "Opnieuw uitvoeren";
+            this.opnieuwUitvoeren.Click += new System.EventHandler(this.opnieuwUitvoeren_Click);
             // 
             // panel1
             // 
@@ -195,12 +200,6 @@ namespace GrafischeEditor_DP
             this.DrawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseMove);
             this.DrawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseUp);
             // 
-            // bestandToolStripMenuItem
-            // 
-            this.bestandToolStripMenuItem.Name = "bestandToolStripMenuItem";
-            this.bestandToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.bestandToolStripMenuItem.Text = "Bestand";
-            // 
             // Tekening
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -234,9 +233,8 @@ namespace GrafischeEditor_DP
         private System.Windows.Forms.Panel DrawPanel;
         private System.Windows.Forms.Button ButtonRemove;
         private System.Windows.Forms.Button ButtonResize;
-        private System.Windows.Forms.ToolStripMenuItem bewerkenToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ongedaanMakenCTRLYToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Bewerken;
+        private System.Windows.Forms.ToolStripMenuItem ongedaanMaken;
         private System.Windows.Forms.ToolStripMenuItem opnieuwUitvoeren;
-        private System.Windows.Forms.ToolStripMenuItem bestandToolStripMenuItem;
     }
 }
