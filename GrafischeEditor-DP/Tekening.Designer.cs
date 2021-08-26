@@ -135,7 +135,7 @@ namespace GrafischeEditor_DP
             // ButtonResize
             // 
             this.ButtonResize.Font = new System.Drawing.Font("Webdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonResize.Image = global::GrafischeEditor_DP.Properties.Resources.resize_minimum_arrow_small_7_16467;
+            this.ButtonResize.Image = ((System.Drawing.Image)(resources.GetObject("ButtonResize.Image")));
             this.ButtonResize.Location = new System.Drawing.Point(11, 227);
             this.ButtonResize.Name = "ButtonResize";
             this.ButtonResize.Size = new System.Drawing.Size(90, 65);
@@ -146,7 +146,6 @@ namespace GrafischeEditor_DP
             // ButtonRemove
             // 
             this.ButtonRemove.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonRemove.Image = global::GrafischeEditor_DP.Properties.Resources.filled_trash;
             this.ButtonRemove.Location = new System.Drawing.Point(11, 298);
             this.ButtonRemove.Name = "ButtonRemove";
             this.ButtonRemove.Size = new System.Drawing.Size(90, 65);
@@ -169,7 +168,7 @@ namespace GrafischeEditor_DP
             // ButtonSquare
             // 
             this.ButtonSquare.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonSquare.Image = global::GrafischeEditor_DP.Properties.Resources._3766222;
+            this.ButtonSquare.Image = ((System.Drawing.Image)(resources.GetObject("ButtonSquare.Image")));
             this.ButtonSquare.Location = new System.Drawing.Point(11, 154);
             this.ButtonSquare.Name = "ButtonSquare";
             this.ButtonSquare.Size = new System.Drawing.Size(90, 65);
@@ -180,7 +179,7 @@ namespace GrafischeEditor_DP
             // ButtonEllipse
             // 
             this.ButtonEllipse.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonEllipse.Image = global::GrafischeEditor_DP.Properties.Resources.ellipse_vector_format;
+            this.ButtonEllipse.Image = ((System.Drawing.Image)(resources.GetObject("ButtonEllipse.Image")));
             this.ButtonEllipse.Location = new System.Drawing.Point(11, 83);
             this.ButtonEllipse.Name = "ButtonEllipse";
             this.ButtonEllipse.Size = new System.Drawing.Size(90, 65);

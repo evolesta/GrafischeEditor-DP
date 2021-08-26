@@ -7,7 +7,7 @@ namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
-        Figuur.TekenModus HuidigeModus; // defineer het type figuur
+        TekenModus HuidigeModus; // defineer het type figuur
 
         Rectangle rectangle; // tijdelijk figuur
         Point startpos; // start positie X Y rechthoek
@@ -18,7 +18,7 @@ namespace GrafischeEditor_DP
         bool IsResizing = false; // bool wanneer een bestaand figuur van grootte veranderd wordt
         int ModifyingFigureIndex = -1; // index waarde van aan te passen object bij resizing + moving
         Rectangle ModifyingRectangle; // rectangle die verplaatst of vergroot wordt
-        Figuur.TekenModus ModifyingFigureType;
+        FiguurType ModifyingFigureType;
 
         Controller controller = new Controller(); // controller object
         // genereer command invoker en receiver objecten
@@ -31,18 +31,20 @@ namespace GrafischeEditor_DP
 
         // METHODEN -- //
         // Methode voor het printen van een figuur op het scherm
-        private void Draw(Figuur.TekenModus type, Rectangle positie, bool selected, PaintEventArgs e)
+        private void Draw(FiguurType type, Rectangle positie, bool selected, PaintEventArgs e)
         {
             Pen pen = generatePen(selected); // genereer nieuwe pen
 
             switch (type)
             {
-                case Figuur.TekenModus.Square:
+                case FiguurType.Rectangle:
                     e.Graphics.DrawRectangle(pen, positie);
                     break;
-                case Figuur.TekenModus.Ellipse:
+                case FiguurType.Ellipse:
                     e.Graphics.DrawEllipse(pen, positie);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
 
@@ -132,33 +134,33 @@ namespace GrafischeEditor_DP
         private void ButtonEllipse_Click(object sender, EventArgs e)
         {
             // verander naar tekencursor & state
-            HuidigeModus = Figuur.TekenModus.Ellipse;
+            HuidigeModus = TekenModus.Ellipse;
             Cursor = Cursors.Cross;
         }
 
         // optie om squares te tekenen
         private void ButtonSquare_Click(object sender, EventArgs e)
         {
-            HuidigeModus = Figuur.TekenModus.Square;
+            HuidigeModus = TekenModus.Rectangle;
             Cursor = Cursors.Cross;
         }
 
         // opties voor standaard pointer, voor selecties e.d.
         private void ButtonPointer_Click(object sender, EventArgs e)
         {
-            HuidigeModus = Figuur.TekenModus.Select;
+            HuidigeModus = TekenModus.Select;
             Cursor = Cursors.Default;
         }
 
         private void ButtonRemove_Click(object sender, EventArgs e)
         {
-            HuidigeModus = Figuur.TekenModus.Verwijder;
+            HuidigeModus = TekenModus.Verwijder;
             Cursor = Cursors.No;
         }
 
         private void ButtonResize_Click(object sender, EventArgs e)
         {
-            HuidigeModus = Figuur.TekenModus.Resize;
+            HuidigeModus = TekenModus.Resize;
             Cursor = Cursors.SizeNWSE;
         }
 
@@ -173,7 +175,7 @@ namespace GrafischeEditor_DP
 
             switch (HuidigeModus)
             {
-                case Figuur.TekenModus.Select:
+                case TekenModus.Select:
                     foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt
@@ -185,7 +187,7 @@ namespace GrafischeEditor_DP
                         }
                     }
                     break;
-                case Figuur.TekenModus.Resize:
+                case TekenModus.Resize:
                     foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
@@ -219,34 +221,33 @@ namespace GrafischeEditor_DP
 
             switch (HuidigeModus)
             {
-                case Figuur.TekenModus.Select:
+                case TekenModus.Select:
                     if (ModifyingFigureIndex >= 0)
                     {
                         if (endpos == startpos)
                             controller.WijzigSelectie(ModifyingFigureIndex);
                         else
                             invoker.SetCommand(new BewerkFiguurCommand(controller, MoveRectangle(ModifyingRectangle), ModifyingFigureIndex));
-                            invoker.Execute();
                     }
                     break;
-                case Figuur.TekenModus.Resize:
+                case TekenModus.Resize:
                     if (ModifyingFigureIndex >= 0 && endpos != startpos)
                         invoker.SetCommand(new BewerkFiguurCommand(controller, ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex));
-                        invoker.Execute();
                     break;
-                case Figuur.TekenModus.Square:
-                case Figuur.TekenModus.Ellipse:
-                    invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), HuidigeModus));
-                    invoker.Execute();
+                case TekenModus.Rectangle:
+                case TekenModus.Ellipse:
+                    invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), ToFiguurType(HuidigeModus)));
                     break;
-                case Figuur.TekenModus.Verwijder:
+                case TekenModus.Verwijder:
                     if (ModifyingFigureIndex >= 0 && endpos == startpos)
                         invoker.SetCommand(new VerwijderFiguurCommand(controller, ModifyingFigureIndex));
-                        invoker.Execute();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            
+            if(invoker.HasCommand)
+                invoker.Execute();
 
             ModifyingFigureIndex = -1;
             Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
@@ -263,7 +264,7 @@ namespace GrafischeEditor_DP
             // wanneer er nog getekend wordt, teken preview
             if (IsMouseDown)
             {
-                Draw(HuidigeModus, GetRectangle(), false, e);
+                Draw(ToFiguurType(HuidigeModus), GetRectangle(), false, e);
             }
 
             if (IsMoving)
@@ -325,5 +326,24 @@ namespace GrafischeEditor_DP
             invoker.Redo();
             Refresh();
         }
+
+        private static FiguurType ToFiguurType(TekenModus modus)
+        {
+            return modus switch
+            {
+                TekenModus.Rectangle => FiguurType.Rectangle,
+                TekenModus.Ellipse => FiguurType.Ellipse,
+                _ => throw new ArgumentOutOfRangeException(nameof(modus), modus, null)
+            };
+        }
     }
+
+    public enum TekenModus
+    {
+        Rectangle,
+        Ellipse,
+        Select,
+        Resize,
+        Verwijder
+    } // enum voor soorten figuren
 }

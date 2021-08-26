@@ -6,7 +6,7 @@ namespace GrafischeEditor_DP
     /// <summary>
     /// 'Receiver' class
     /// </summary>
-    class Controller
+    public class Controller
     {
         // Variabelen declareren
         private List<Figuur> Figuren = new List<Figuur>(); // list van Figuur objecten
@@ -19,12 +19,12 @@ namespace GrafischeEditor_DP
         public Figuur GetFiguur(int objIndex) { return Figuren[objIndex]; }
 
         // maak nieuw figuur object aan en voeg toe aan de list
-        public void NieuwFiguur(Rectangle rectangle, Figuur.TekenModus soortFiguur)
+        public void NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
         {
             int counter = Figuren.Count + 1; // genereer counter voor unieke object naam
 
             // voeg nieuw object toe aan de list
-            Figuren.Add(new Figuur() { Naam = "figuur" + counter, Positie = rectangle, Type = soortFiguur, Geselecteerd = false });
+            Figuren.Add(new Figuur() { Naam = "figuur " + counter, Positie = rectangle, Type = soortFiguur, Geselecteerd = false });
             
         }
 

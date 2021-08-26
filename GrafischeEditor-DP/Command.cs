@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 namespace GrafischeEditor_DP
@@ -23,10 +19,10 @@ namespace GrafischeEditor_DP
     {
         private Controller _controller;
         private Rectangle _rectangle;
-        private Figuur.TekenModus _soortFiguur;
+        private FiguurType _soortFiguur;
 
         // constructor
-        public NieuwFiguurCommand(Controller controller, Rectangle rectangle, Figuur.TekenModus soortFiguur)
+        public NieuwFiguurCommand(Controller controller, Rectangle rectangle, FiguurType soortFiguur)
         {
             this._controller = controller;
             this._rectangle = rectangle;
@@ -61,7 +57,7 @@ namespace GrafischeEditor_DP
 
         public void Execute()
         {
-            oudePositie = _controller.GetFiguur(_index).Positie; // verkrijg huidige rectangle voor undo
+            oudePositie = _controller.GetFiguur(_index).Positie; // verkrijg huidige figuur voor undo
             _controller.WijzigFiguur(_rectangle, _index); // plaats nieuwe rectangle
         }
 
@@ -134,11 +130,12 @@ namespace GrafischeEditor_DP
         public void Undo() { } // geen undo voor opslaan bestand
     }
 
-    class Invoker
+    public class Invoker
     {
         private ICommand _command; // activeer benodigd command
         private Stack<ICommand> _Undo = new Stack<ICommand>();
         private Stack<ICommand> _Redo = new Stack<ICommand>();
+        public bool HasCommand => _command is not null;
 
         public void SetCommand(ICommand command)
         {
