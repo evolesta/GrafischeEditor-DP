@@ -9,6 +9,7 @@ namespace GrafischeEditor_DP
         public string Naam { get; set; }
         public ComponentType ComponentType { get; }
         public int Id { get; set; }
+        public bool Geselecteerd { get; set; }
     }
 
     public enum ComponentType
@@ -47,7 +48,8 @@ namespace GrafischeEditor_DP
         public string Naam { get; set; }
         public ComponentType ComponentType => ComponentType.Groep;
         public int Id { get; set; }
-        public List<IComponent> Children = new List<IComponent>();
+        public bool Geselecteerd { get; set; }
+        public List<IComponent> Children = new();
 
         public void NieuwComponent(IComponent groep)
         {

@@ -17,15 +17,18 @@ namespace GrafischeEditor_DP
         bool IsMouseDown = false; // bool wanneer muisknop vastgehouden wordt
         bool IsMoving = false; // bool wanneer een bestaand figuur verplaatst wordt
         bool IsResizing = false; // bool wanneer een bestaand figuur van grootte veranderd wordt
-        int ModifyingFigureIndex = -1; // index waarde van aan te passen object bij resizing + moving
+        private bool IsDrawing ;
+        int ModifyingFigureId = -1; // index waarde van aan te passen object bij resizing + moving
         Rectangle ModifyingRectangle; // rectangle die verplaatst of vergroot wordt
         FiguurType ModifyingFigureType;
 
         Controller controller = new Controller(); // controller object
 
-        private IEnumerable<IComponent> Componenten => controller.GetComponents();
+        private IEnumerable<IComponent> Componenten() => controller.GetComponents();
 
-        private IEnumerable<Figuur> Figuren => (IEnumerable<Figuur>)Componenten.Where(c => c.ComponentType == ComponentType.Figuur);
+        private IEnumerable<Figuur> Figuren () => Componenten()
+            .Where(c => c.ComponentType == ComponentType.Figuur)
+            .Select(c => c as Figuur);
         // genereer command invoker en receiver objecten
         Invoker invoker = new Invoker();
 
@@ -191,38 +194,46 @@ namespace GrafischeEditor_DP
         private void DrawPanel_MouseDown(object sender, MouseEventArgs e)
         {
             IsMouseDown = true;
+            IsDrawing = IsInTekenModus();
+            
             startpos = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = Figuren.LastOrDefault(f => f.Positie.Contains(e.Location));
-            ModifyingFigureIndex = Figuren.IndexOf(huidigFiguur);
+            var huidigFiguur = Figuren().LastOrDefault(f => f.Positie.Contains(e.Location));
+            if(huidigFiguur is not null) 
+                ModifyingFigureId = huidigFiguur.Id;
 
             switch (HuidigeModus)
             {
                 case TekenModus.Select:
-                    foreach (var figuur in controller.GetComponents().ToList()) // doorloop alle figuren
+                    foreach (var figuur in Figuren()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsMoving = true; // zet boolean op beweegmodus
-                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
-                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureId).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
                 case TekenModus.Resize:
-                    foreach (var figuur in controller.GetComponents().ToList()) // doorloop alle figuren
+                    foreach (var figuur in Figuren()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
                         if (figuur.Positie.Contains(startpos))
                         {
                             IsResizing = true; // zet boolean actief resizing
-                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureIndex).Positie; // verkrijg rectangle van object
-                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureIndex).Type; // verkrijg soort figuur
+                            ModifyingRectangle = controller.GetFiguur(ModifyingFigureId).Positie; // verkrijg rectangle van object
+                            ModifyingFigureType = controller.GetFiguur(ModifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
             }
+        }
+
+        private bool IsInTekenModus()
+        {
+            return HuidigeModus == TekenModus.Ellipse || HuidigeModus == TekenModus.Rectangle;
         }
 
         private void DrawPanel_MouseMove(object sender, MouseEventArgs e)
@@ -245,25 +256,25 @@ namespace GrafischeEditor_DP
             switch (HuidigeModus)
             {
                 case TekenModus.Select:
-                    if (ModifyingFigureIndex >= 0)
+                    if (ModifyingFigureId >= 0)
                     {
                         if (endpos == startpos)
-                            controller.WijzigSelectie(ModifyingFigureIndex);
+                            controller.WijzigSelectie(ModifyingFigureId);
                         else
-                            invoker.SetCommand(new BewerkFiguurCommand(controller, MoveRectangle(ModifyingRectangle), ModifyingFigureIndex));
+                            invoker.SetCommand(new BewerkFiguurCommand(controller, MoveRectangle(ModifyingRectangle), ModifyingFigureId));
                     }
                     break;
                 case TekenModus.Resize:
-                    if (ModifyingFigureIndex >= 0 && endpos != startpos)
-                        invoker.SetCommand(new BewerkFiguurCommand(controller, ResizeRectangle(ModifyingRectangle), ModifyingFigureIndex));
+                    if (ModifyingFigureId >= 0 && endpos != startpos)
+                        invoker.SetCommand(new BewerkFiguurCommand(controller, ResizeRectangle(ModifyingRectangle), ModifyingFigureId));
                     break;
                 case TekenModus.Rectangle:
                 case TekenModus.Ellipse:
                     invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), ToFiguurType(HuidigeModus)));
                     break;
                 case TekenModus.Verwijder:
-                    if (ModifyingFigureIndex >= 0 && endpos == startpos)
-                        invoker.SetCommand(new VerwijderFiguurCommand(controller, ModifyingFigureIndex));
+                    if (ModifyingFigureId >= 0 && endpos == startpos)
+                        invoker.SetCommand(new VerwijderFiguurCommand(controller, ModifyingFigureId));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -272,14 +283,14 @@ namespace GrafischeEditor_DP
             if(invoker.HasCommand)
                 invoker.Execute();
 
-            ModifyingFigureIndex = -1;
+            ModifyingFigureId = -1;
             Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
         }
 
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in controller.GetComponents())
+            foreach (var figuur in Figuren())
             {
                 Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
             }
@@ -287,7 +298,7 @@ namespace GrafischeEditor_DP
             FillTreeview(); // genereer TreeView met figuren
 
             // wanneer er nog getekend wordt, teken preview
-            if (IsMouseDown)
+            if (IsDrawing)
             {
                 Draw(ToFiguurType(HuidigeModus), GetRectangle(), false, e);
             }
@@ -302,6 +313,7 @@ namespace GrafischeEditor_DP
                 Draw(ModifyingFigureType, ResizeRectangle(ModifyingRectangle), true, e);
             }
         }
+
 
         private void BestandOpslaan_Click(object sender, EventArgs e)
         {
@@ -336,7 +348,7 @@ namespace GrafischeEditor_DP
         {
             CheckIfDrawingSaved(); // controleren of bestaande tekening is opgeslagen
 
-            controller.ResetFiguren(); // verwijder alle figuren uit lijst
+            controller.ResetComponents(); // verwijder alle figuren uit lijst
             Refresh(); // herteken het werkveld
         }
 

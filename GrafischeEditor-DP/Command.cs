@@ -20,6 +20,7 @@ namespace GrafischeEditor_DP
         private Controller _controller;
         private Rectangle _rectangle;
         private FiguurType _soortFiguur;
+        private int _id;
 
         // constructor
         public NieuwFiguurCommand(Controller controller, Rectangle rectangle, FiguurType soortFiguur)
@@ -31,12 +32,12 @@ namespace GrafischeEditor_DP
 
         public void Execute()
         {
-            _controller.NieuwFiguur(_rectangle, _soortFiguur);
+            _id = _controller.NieuwFiguur(_rectangle, _soortFiguur);
         }
 
         public void Undo()
         {
-            _controller.VerwijderFiguur(_controller.GetComponents().Count - 1); // verwijder laatste object uit list
+            _controller.VerwijderFiguur(_id); // verwijder object uit list
         }
     }
 
@@ -45,25 +46,25 @@ namespace GrafischeEditor_DP
         private Controller _controller;
         private Rectangle _rectangle;
         private Rectangle oudePositie;
-        private int _index;
+        private int _id;
         
         // constructor
-        public BewerkFiguurCommand(Controller controller, Rectangle rectangle, int index)
+        public BewerkFiguurCommand(Controller controller, Rectangle rectangle, int id)
         {
             this._controller = controller;
             this._rectangle = rectangle;
-            this._index = index;
+            this._id = id;
         }
 
         public void Execute()
         {
-            oudePositie = _controller.GetFiguur(_index).Positie; // verkrijg huidige figuur voor undo
-            _controller.WijzigFiguur(_rectangle, _index); // plaats nieuwe rectangle
+            oudePositie = _controller.GetFiguur(_id).Positie; // verkrijg huidige figuur voor undo
+            _controller.WijzigFiguur(_rectangle, _id); // plaats nieuwe rectangle
         }
 
         public void Undo()
         {
-            _controller.WijzigFiguur(oudePositie, _index); // herstel vorige rectangle
+            _controller.WijzigFiguur(oudePositie, _id); // herstel vorige rectangle
         }
     }
 

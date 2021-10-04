@@ -10,7 +10,6 @@ namespace GrafischeEditor_DP
     public class Controller
     {
         // Variabelen declareren
-        private List<Figuur> Figuren = new List<Figuur>(); // list van Component objecten
         private Bestand bestand = new Bestand();
         private IList<IComponent> _componenten = new List<IComponent>();
 
@@ -18,15 +17,15 @@ namespace GrafischeEditor_DP
         public IEnumerable<IComponent> GetComponents() { return _componenten; }
 
         // Geeft een enkel figuur uit de lijst terug
-        public Figuur GetFiguur(int objIndex) { return Figuren[objIndex]; }
+        public Figuur GetFiguur(int id) { return Figuren().FirstOrDefault(f => f.Id == id); }
 
         // maak nieuw figuur object aan en voeg toe aan de list
-        public void NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
+        public int NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
         {
 
             var newId = GetNewId();//ids.Max() + 1;
             // voeg nieuw object toe aan de list
-            Figuren.Add(new Figuur()
+            _componenten.Add(new Figuur()
             {
                 Id = newId, 
                 Naam = "figuur " + newId, 
@@ -35,10 +34,14 @@ namespace GrafischeEditor_DP
                 Geselecteerd = false
             });
 
+            return newId;
         }
 
         private int GetNewId()
         {
+            if (_componenten.Count == 0)
+                return 1;
+
             //get all used Ids:
             var ids = new List<int>();
             foreach (var component in _componenten)
@@ -65,44 +68,56 @@ namespace GrafischeEditor_DP
         }
 
         // wijzig figuur object in de lijst voor nieuwe positie/grootte
-        public void WijzigFiguur(Rectangle rectangle, int index)
+        public void WijzigFiguur(Rectangle rectangle, int id)
         {
-            Figuren[index].Positie = rectangle; // wijzig rectangle x-y en grootte
+            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
+            if(figuur is not null)
+                figuur.Positie = rectangle; // wijzig rectangle x-y en grootte
         }
 
         // verwijder figuur object uit de lijst
-        public void VerwijderFiguur(int index)
+        public void VerwijderFiguur(int id)
         {
-            Figuren.RemoveAt(index); // verwijder object uit de lijst
+            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
+            if(figuur is not null)
+                _componenten.Remove(figuur); // verwijder object uit de lijst
         }
 
         // wijzig de selectie van een figuur
-        public void WijzigSelectie(int objIndex)
+        public void WijzigSelectie(int id)
         {
             // pas boolean waarde aan in object door bitwise X-OR met true
-            Figuren[objIndex].Geselecteerd ^= true;
+            var component = _componenten.FirstOrDefault(c => c.Id == id);
+            if(component is not null)
+                component.Geselecteerd ^= true;
         }
 
         // verwijder alle figuren uit de lijst
-        public void ResetFiguren()
+        public void ResetComponents()
         {
-            Figuren.Clear();
+            _componenten.Clear();
         }
 
         public void OpenBestand(string Bestandspad)
         {
-            ResetFiguren(); // leeg lijst met figuren
-            Figuren = bestand.Open(Bestandspad); // lees XML bestand en plaats figuren in list
+            ResetComponents(); // leeg lijst met figuren
+            _componenten = bestand.Open(Bestandspad); // lees XML bestand en plaats figuren in list
         }
 
         public void OpslaanBestand(string Bestandspad)
         {
-            bestand.Opslaan(Bestandspad, Figuren); // sla huidige list op naar een XML bestand
+            bestand.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
         }
 
         public void NieuweGroep(string Naam)
         {
             _componenten.Add(new Groep { Naam = Naam, Id = GetNewId()});
+        }
+
+        private IEnumerable<Figuur> Figuren()
+        {
+            return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
+                .Select(c => c as Figuur);
         }
     }
 }
