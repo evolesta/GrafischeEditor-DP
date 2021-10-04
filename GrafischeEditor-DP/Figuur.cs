@@ -4,7 +4,9 @@ using System.Drawing;
 namespace GrafischeEditor_DP
 {
 
-    public interface IFiguur { }
+    public interface IFiguur {
+        public string Naam { get; set; }
+    }
 
     /// <summary>
     /// De Figuur klasse representeert een enkel figuur die getekend kan worden
@@ -29,8 +31,19 @@ namespace GrafischeEditor_DP
         Ellipse
     }
 
-    public class CompositeFiguur : IFiguur
+    public class Groep : IFiguur
     {
-        public IEnumerable<Figuur> Children { get; set; }
+        public string Naam { get; set; }
+        List<IFiguur> Groepen = new List<IFiguur>();
+
+        public void NieuweGroep(IFiguur groep)
+        {
+            Groepen.Add(groep);
+        }
+
+        public void VerwijderGroep(int index)
+        {
+            Groepen.RemoveAt(index);
+        }
     }
 }

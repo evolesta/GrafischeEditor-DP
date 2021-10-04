@@ -11,6 +11,7 @@ namespace GrafischeEditor_DP
         // Variabelen declareren
         private List<Figuur> Figuren = new List<Figuur>(); // list van Figuur objecten
         private Bestand bestand = new Bestand();
+        private Groep groep = new Groep();
 
         // Geeft de actuele lijst met figuren terug
         public List<Figuur> GetFiguren() { return Figuren; }
@@ -62,6 +63,11 @@ namespace GrafischeEditor_DP
         public void OpslaanBestand(string Bestandspad)
         {
             bestand.Opslaan(Bestandspad, Figuren); // sla huidige list op naar een XML bestand
+        }
+
+        public void NieuweGroep(string Naam)
+        {
+            groep.NieuweGroep(new Groep() { Naam = Naam });
         }
     }
 }

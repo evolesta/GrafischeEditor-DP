@@ -45,6 +45,8 @@ namespace GrafischeEditor_DP
             this.ButtonSquare = new System.Windows.Forms.Button();
             this.ButtonEllipse = new System.Windows.Forms.Button();
             this.DrawPanel = new System.Windows.Forms.Panel();
+            this.treeView = new System.Windows.Forms.TreeView();
+            this.btnNieuweGroep = new System.Windows.Forms.Button();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -56,7 +58,7 @@ namespace GrafischeEditor_DP
             this.Bewerken});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(1044, 24);
+            this.MenuStrip.Size = new System.Drawing.Size(1252, 24);
             this.MenuStrip.TabIndex = 0;
             this.MenuStrip.Text = "menuStrip";
             // 
@@ -199,11 +201,30 @@ namespace GrafischeEditor_DP
             this.DrawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseMove);
             this.DrawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseUp);
             // 
+            // treeView
+            // 
+            this.treeView.Location = new System.Drawing.Point(1038, 56);
+            this.treeView.Name = "treeView";
+            this.treeView.Size = new System.Drawing.Size(202, 573);
+            this.treeView.TabIndex = 3;
+            // 
+            // btnNieuweGroep
+            // 
+            this.btnNieuweGroep.Location = new System.Drawing.Point(1039, 27);
+            this.btnNieuweGroep.Name = "btnNieuweGroep";
+            this.btnNieuweGroep.Size = new System.Drawing.Size(201, 23);
+            this.btnNieuweGroep.TabIndex = 4;
+            this.btnNieuweGroep.Text = "Nieuwe groep";
+            this.btnNieuweGroep.UseVisualStyleBackColor = true;
+            this.btnNieuweGroep.Click += new System.EventHandler(this.btnNieuweGroep_Click);
+            // 
             // Tekening
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1044, 641);
+            this.ClientSize = new System.Drawing.Size(1252, 641);
+            this.Controls.Add(this.btnNieuweGroep);
+            this.Controls.Add(this.treeView);
             this.Controls.Add(this.DrawPanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.MenuStrip);
@@ -235,5 +256,7 @@ namespace GrafischeEditor_DP
         private System.Windows.Forms.ToolStripMenuItem Bewerken;
         private System.Windows.Forms.ToolStripMenuItem ongedaanMaken;
         private System.Windows.Forms.ToolStripMenuItem opnieuwUitvoeren;
+        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.Button btnNieuweGroep;
     }
 }

@@ -128,6 +128,24 @@ namespace GrafischeEditor_DP
             }
         }
 
+        // TreeView voorzien van figuren + groepen
+        public void FillTreeview()
+        {
+            treeView.BeginUpdate();
+            treeView.Nodes.Clear(); // leeg TreeView om nieuwe view te genereren
+
+            // maak voor ieder figuur een node aan in de treeview
+            foreach (var figuur in controller.GetFiguren())
+            {
+                treeView.Nodes.Add(
+                    new TreeNode("•" + figuur.Naam));
+            }
+
+            
+
+            treeView.EndUpdate(); // toon treeview naar GUI
+        }
+
         // -- Drawpanel mouse actions
 
         // optie op ellipsen te tekenen
@@ -261,6 +279,8 @@ namespace GrafischeEditor_DP
                 Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
             }
 
+            FillTreeview(); // genereer TreeView met figuren
+
             // wanneer er nog getekend wordt, teken preview
             if (IsMouseDown)
             {
@@ -335,6 +355,11 @@ namespace GrafischeEditor_DP
                 TekenModus.Ellipse => FiguurType.Ellipse,
                 _ => throw new ArgumentOutOfRangeException(nameof(modus), modus, null)
             };
+        }
+
+        private void btnNieuweGroep_Click(object sender, EventArgs e)
+        {
+            controller.NieuweGroep("groepxxx");
         }
     }
 
