@@ -1,17 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms.Design;
 
 namespace GrafischeEditor_DP
 {
 
-    public interface IFiguur {
+    public interface IComponent {
         public string Naam { get; set; }
+        public ComponentType ComponentType { get; }
+        public int Id { get; set; }
+    }
+
+    public enum ComponentType
+    {
+        Groep,
+        Figuur
     }
 
     /// <summary>
-    /// De Figuur klasse representeert een enkel figuur die getekend kan worden
+    /// De Component klasse representeert een enkel figuur die getekend kan worden
     /// </summary>
-    public class Figuur : IFiguur
+    public class Figuur : IComponent
     {
         // globale variabelen voor figuur
         private string naam; // naam van het figuur
@@ -20,6 +29,8 @@ namespace GrafischeEditor_DP
 
         // getters en setters
         public string Naam { get => naam; set => naam = value; }
+        public ComponentType ComponentType => ComponentType.Figuur;
+        public int Id { get; set; }
         public Rectangle Positie { get => positie; set => positie = value; }
         public bool Geselecteerd { get => geselecteerd; set => geselecteerd = value; }
         public FiguurType Type { get; set; }
@@ -31,19 +42,21 @@ namespace GrafischeEditor_DP
         Ellipse
     }
 
-    public class Groep : IFiguur
+    public class Groep : IComponent
     {
         public string Naam { get; set; }
-        List<IFiguur> Groepen = new List<IFiguur>();
+        public ComponentType ComponentType => ComponentType.Groep;
+        public int Id { get; set; }
+        public List<IComponent> Children = new List<IComponent>();
 
-        public void NieuweGroep(IFiguur groep)
+        public void NieuwComponent(IComponent groep)
         {
-            Groepen.Add(groep);
+            Children.Add(groep);
         }
 
-        public void VerwijderGroep(int index)
+        public void VerwijderComponent(int index)
         {
-            Groepen.RemoveAt(index);
+            Children.RemoveAt(index);
         }
     }
 }

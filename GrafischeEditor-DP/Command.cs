@@ -36,7 +36,7 @@ namespace GrafischeEditor_DP
 
         public void Undo()
         {
-            _controller.VerwijderFiguur(_controller.GetFiguren().Count - 1); // verwijder laatste object uit list
+            _controller.VerwijderFiguur(_controller.GetComponents().Count - 1); // verwijder laatste object uit list
         }
     }
 
@@ -70,7 +70,7 @@ namespace GrafischeEditor_DP
     class VerwijderFiguurCommand : ICommand
     {
         private Controller _controller;
-        private Figuur figuur;
+        private Figuur _component;
         private int _index;
 
         // constructor
@@ -82,13 +82,13 @@ namespace GrafischeEditor_DP
 
         public void Execute()
         {
-            this.figuur = _controller.GetFiguur(_index); // verkrijg oude object voor undo
+            this._component = _controller.GetFiguur(_index); // verkrijg oude object voor undo
             _controller.VerwijderFiguur(_index); // verwijder uit list
         }
 
         public void Undo()
         {
-            _controller.NieuwFiguur(figuur.Positie, figuur.Type); // voeg oude object opnieuw toe aan list
+            _controller.NieuwFiguur(_component.Positie, _component.Type); // voeg oude object opnieuw toe aan list
         }
     }
 

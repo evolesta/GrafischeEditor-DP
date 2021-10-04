@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace GrafischeEditor_DP
 {
@@ -9,12 +10,12 @@ namespace GrafischeEditor_DP
     public class Controller
     {
         // Variabelen declareren
-        private List<Figuur> Figuren = new List<Figuur>(); // list van Figuur objecten
+        private List<Figuur> Figuren = new List<Figuur>(); // list van Component objecten
         private Bestand bestand = new Bestand();
-        private Groep groep = new Groep();
+        private IList<IComponent> _componenten = new List<IComponent>();
 
         // Geeft de actuele lijst met figuren terug
-        public List<Figuur> GetFiguren() { return Figuren; }
+        public IEnumerable<IComponent> GetComponents() { return _componenten; }
 
         // Geeft een enkel figuur uit de lijst terug
         public Figuur GetFiguur(int objIndex) { return Figuren[objIndex]; }
@@ -22,11 +23,45 @@ namespace GrafischeEditor_DP
         // maak nieuw figuur object aan en voeg toe aan de list
         public void NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
         {
-            int counter = Figuren.Count + 1; // genereer counter voor unieke object naam
 
+            var newId = GetNewId();//ids.Max() + 1;
             // voeg nieuw object toe aan de list
-            Figuren.Add(new Figuur() { Naam = "figuur " + counter, Positie = rectangle, Type = soortFiguur, Geselecteerd = false });
-            
+            Figuren.Add(new Figuur()
+            {
+                Id = newId, 
+                Naam = "figuur " + newId, 
+                Positie = rectangle, 
+                Type = soortFiguur, 
+                Geselecteerd = false
+            });
+
+        }
+
+        private int GetNewId()
+        {
+            //get all used Ids:
+            var ids = new List<int>();
+            foreach (var component in _componenten)
+                IetsMetIds(ids, component);
+
+            return ids.Max() + 1;
+        }
+
+        private void IetsMetIds(List<int> ids, IComponent component)
+        {
+            ids.Add(component.Id);
+            if (component is Groep childGroup)
+                ids.AddRange(GetIdsFromGroupRecursive(childGroup));
+        }
+
+        private IEnumerable<int> GetIdsFromGroupRecursive(Groep groep)
+        {
+            var ids = new List<int>();
+
+            foreach (var child in groep.Children)
+                IetsMetIds(ids, child);
+
+            return ids;
         }
 
         // wijzig figuur object in de lijst voor nieuwe positie/grootte
@@ -67,7 +102,7 @@ namespace GrafischeEditor_DP
 
         public void NieuweGroep(string Naam)
         {
-            groep.NieuweGroep(new Groep() { Naam = Naam });
+            _componenten.Add(new Groep { Naam = Naam, Id = GetNewId()});
         }
     }
 }

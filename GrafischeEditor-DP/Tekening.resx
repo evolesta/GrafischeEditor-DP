@@ -57,14 +57,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="MenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="ButtonResize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <assembly alias="System.Drawing.Common" name="System.Drawing.Common, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+  <data name="ButtonResize.Image" type="System.Drawing.Bitmap, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAYAAACO98lFAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAAHYJJREFUeF51nAm4VMWVgF+/7tfdr9/KDuIWnYxBJuBERQfQEfWL+76j4oKKoiIY
+        vAAADrwBlbxySQAAHYJJREFUeF51nAm4VMWVgF+/7tfdr9/KDuIWnYxBJuBERQfQEfWL+76j4oKKoiIY
         QUFCRMUtQURxTVAUBI17VBJxGwUJqLjNRJPRRKLGkMWYmEziEs38f1F16fseqe873723Ti3nnDpb1b3d
         Df+sPPnkk42vvfZa449//OPGWJWVH/3oR4Xnn3++uGrVquIPfvCDQqwO5ZFHHinQp/jiiy8WbRerQ7Ht
         c889V1yzZk3R8WN1Vp599tkicxafeuqpbjjbv/rqq8Wnn366G27ZsmWNL730UnHFihXFBx98MM25JXB9
@@ -193,7 +190,7 @@
         /1aoKw0N/w+AMLjjYtT1NAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="ButtonPointer.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="ButtonPointer.Image" type="System.Drawing.Bitmap, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAYAAACO98lFAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAEktJREFUeF6tXGlwnVUZbu6am6Q3SZM0y02apluaNm2hhdDW7q2KSLH80BEd0UFE
@@ -277,10 +274,10 @@
         qo0LYxtjSXq8tjZHga2q+S+zr8bN3u1J0AAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="ButtonSquare.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="ButtonSquare.Image" type="System.Drawing.Bitmap, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAYAAACO98lFAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAACYZJREFUeF7Vm0eLRUUQhcec08ac48aViukXmDMogqIg/gAXKkYQdSeIOSvmjQtF
+        vAAADrwBlbxySQAACYZJREFUeF7Vm0eLRUUQhcec08ac48aViukXmDMogqIg/gAXKkYQdSeIOSvmjQtF
         Rcz6A1wI4sKIKOrGhDmfT+ZI3X51OzxHHAsOb967daurT1dX173TvSI5X3hb+E34o4GfhOeEPYQoGwob
         CxsJG/BDRbiOLmjpIrbNZ0sOEp4SfhAy/yPo73vCucLKW0KmNAduvkiw0PHNhE2FlqNcRw99OtYSdHpt
         48eVwq9C5vcc3hWGbwJ3CsgmwpbCFgJO1ITr6KHPfbUo4Bo6WwmbC722HxAyf2v4XZj8QBh9ILwTAFNf
@@ -324,10 +321,10 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="ButtonEllipse.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="ButtonEllipse.Image" type="System.Drawing.Bitmap, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEEAAABBCAYAAACO98lFAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAABVdJREFUeF7tmnmIVWUYh8estD21bLVNJJWsjBDTDCoxBLEF0yRxybWoyKwQJMUs
+        vAAADrwBlbxySQAABVdJREFUeF7tmnmIVWUYh8estD21bLVNJJWsjBDTDCoxBLEF0yRxybWoyKwQJMUs
         laLNBSvwD0ltUdIKxSLLfUnRLJc2omjRUtu0NLPleS4dOlzPLPd6dc49fj94GJSZuee837t/UxEUFBQU
         FBQUFBQUFBSUXh0Ll8A1CVwFR4ROgidhMoyJMQHWw7mQKdWBunAcnAwN4Xx4AtpDvRj+/+twBZwGp4I/
         dzSUneqDL9QBusO9MB6mwbuwAT6EfNc/E96CT2E5vAETYRj0AsOlKZwAqZQv3hYehJfhffgKdsE/CXwN
@@ -353,4 +350,7 @@
         BUTrV51++CWtAAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e">
+    <value>25</value>
+  </metadata>
 </root>

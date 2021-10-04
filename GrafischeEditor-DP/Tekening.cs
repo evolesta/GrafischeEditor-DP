@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,6 +22,10 @@ namespace GrafischeEditor_DP
         FiguurType ModifyingFigureType;
 
         Controller controller = new Controller(); // controller object
+
+        private IEnumerable<IComponent> Componenten => controller.GetComponents();
+
+        private IEnumerable<Figuur> Figuren => (IEnumerable<Figuur>)Componenten.Where(c => c.ComponentType == ComponentType.Figuur);
         // genereer command invoker en receiver objecten
         Invoker invoker = new Invoker();
 
@@ -115,7 +120,7 @@ namespace GrafischeEditor_DP
         private void CheckIfDrawingSaved()
         {
             // controleren of er al figuren getekend zijn
-            if (controller.GetFiguren().Count() != 0)
+            if (controller.GetComponents().Count() != 0)
             {
                 // vraag aan gebruiker of de tekening moet worden opgeslagen
                 DialogResult dialog = MessageBox.Show("Wil je de tekening opslaan?", "Tekening opslaan", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -135,7 +140,7 @@ namespace GrafischeEditor_DP
             treeView.Nodes.Clear(); // leeg TreeView om nieuwe view te genereren
 
             // maak voor ieder figuur een node aan in de treeview
-            foreach (var figuur in controller.GetFiguren())
+            foreach (var figuur in controller.GetComponents())
             {
                 treeView.Nodes.Add(
                     new TreeNode("•" + figuur.Naam));
@@ -188,13 +193,13 @@ namespace GrafischeEditor_DP
             IsMouseDown = true;
             startpos = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = controller.GetFiguren().LastOrDefault(f => f.Positie.Contains(e.Location));
-            ModifyingFigureIndex = controller.GetFiguren().IndexOf(huidigFiguur);
+            var huidigFiguur = Figuren.LastOrDefault(f => f.Positie.Contains(e.Location));
+            ModifyingFigureIndex = Figuren.IndexOf(huidigFiguur);
 
             switch (HuidigeModus)
             {
                 case TekenModus.Select:
-                    foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
+                    foreach (var figuur in controller.GetComponents().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(startpos))
@@ -206,7 +211,7 @@ namespace GrafischeEditor_DP
                     }
                     break;
                 case TekenModus.Resize:
-                    foreach (var figuur in controller.GetFiguren().ToList()) // doorloop alle figuren
+                    foreach (var figuur in controller.GetComponents().ToList()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
                         if (figuur.Positie.Contains(startpos))
@@ -274,7 +279,7 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in controller.GetFiguren())
+            foreach (var figuur in controller.GetComponents())
             {
                 Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
             }
@@ -360,6 +365,7 @@ namespace GrafischeEditor_DP
         private void btnNieuweGroep_Click(object sender, EventArgs e)
         {
             controller.NieuweGroep("groepxxx");
+            FillTreeview();
         }
     }
 
