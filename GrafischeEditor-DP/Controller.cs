@@ -109,9 +109,10 @@ namespace GrafischeEditor_DP
             bestand.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
         }
 
-        public void NieuweGroep(string Naam)
+        public void NieuweGroep()
         {
-            _componenten.Add(new Groep { Naam = Naam, Id = GetNewId()});
+            var newId = GetNewId();
+            _componenten.Add(new Groep { Naam = "groep " + newId, Id = newId});
         }
 
         private IEnumerable<Figuur> Figuren()

@@ -145,11 +145,9 @@ namespace GrafischeEditor_DP
             // maak voor ieder figuur een node aan in de treeview
             foreach (var figuur in controller.GetComponents())
             {
-                treeView.Nodes.Add(
-                    new TreeNode("•" + figuur.Naam));
-            }
-
-            
+                // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
+                treeView.Nodes.Add(new TreeNode(){ Text = figuur.Naam, Tag = figuur });
+            }         
 
             treeView.EndUpdate(); // toon treeview naar GUI
         }
@@ -376,8 +374,23 @@ namespace GrafischeEditor_DP
 
         private void btnNieuweGroep_Click(object sender, EventArgs e)
         {
-            controller.NieuweGroep("groepxxx");
+            controller.NieuweGroep();
             FillTreeview();
+        }
+
+        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var CurrentNode = e.Node.Tag; // verkrijg object uit Node
+                Control c = sender as Control;
+
+                // genereer toolstripmenu
+                ContextMenuStrip menu = new ContextMenuStrip();
+                menu.Items.Add("Hernoemen"); // voeg menu items toe
+                menu.Items.Add("Verwijderen");
+                menu.Show(c, e.Location); // toon menu aan gebruiker
+            }
         }
     }
 
