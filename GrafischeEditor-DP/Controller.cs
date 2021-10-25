@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace GrafischeEditor_DP
 {
@@ -17,7 +18,41 @@ namespace GrafischeEditor_DP
         public IEnumerable<IComponent> GetComponents() { return _componenten; }
 
         // Geeft een enkel figuur uit de lijst terug
-        public Figuur GetFiguur(int id) { return Figuren().FirstOrDefault(f => f.Id == id); }
+        public Figuur GetFiguur(int id)
+        {
+            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
+            if (figuur is null)
+            {
+                var groepen = Groepen();
+                foreach (var subgroep in groepen)
+                {
+                    figuur = GetFiguur(id, subgroep);
+                    if (figuur is not null)
+                        return figuur;
+                }
+            }
+
+            return null;
+        }
+
+        // Geeft een enkel figuur uit de lijst terug
+        public Figuur GetFiguur(int id, Groep groep)
+        {
+            var figuren = groep.Children.Where(c => c.ComponentType == ComponentType.Figuur);
+            var figuur = figuren.FirstOrDefault(f => f.Id == id);
+            if (figuur is null)
+            {
+                var groepen = groep.Children.Where(g => g.ComponentType == ComponentType.Groep);
+                foreach (var subgroep in groepen)
+                {
+                    figuur = GetFiguur(id, subgroep as Groep);
+                    if (figuur is not null)
+                        return figuur as Figuur;
+                }
+            }
+
+            return null;
+        }
 
         // maak nieuw figuur object aan en voeg toe aan de list
         public int NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
@@ -112,13 +147,71 @@ namespace GrafischeEditor_DP
         public void NieuweGroep()
         {
             var newId = GetNewId();
-            _componenten.Add(new Groep { Naam = "groep " + newId, Id = newId});
+            var groep = new Groep {Naam = "groep " + newId, Id = newId};
+            _componenten.Add(groep);
+            groep.Children = new List<IComponent>();
+            RemoveSelectedFromAllGroups();
+            groep.Children.AddRange(Figuren().Where(f => f.Geselecteerd));
+
+        }
+
+        private void RemoveSelectedFromAllGroups()
+        {
+            var selectedFigures = GetAllSelectedFigures();
+            foreach (var figuur in selectedFigures)
+            {
+                
+            }
+        }
+
+        private void RemoveAllSelectedFigures()
+        {
+            _componenten = _componenten.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
+            foreach (var groep in Groepen())
+            {
+                RemoveSelectedFiguresFromGroupRecursive(groep);
+                groep.Children = groep.Children.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
+            }
+        }
+
+        private void RemoveSelectedFiguresFromGroupRecursive(Groep groep)
+        {
+            groep.Children = groep.Children.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
+            foreach (var subGroep in groep.Groepen)
+            {
+                RemoveSelectedFiguresFromGroupRecursive(subGroep);
+            }
+        }
+
+        private IEnumerable<Figuur> GetAllSelectedFigures()
+        {
+            var figuren = new List<Figuur>();
+            figuren.AddRange(Figuren().Where(f => f.Geselecteerd));
+            foreach (var groep in Groepen()) 
+                figuren.AddRange(GeselecteerdeFigurenInGroepRecursive(groep));
+
+            return figuren;
+        }
+
+        private IEnumerable<Figuur> GeselecteerdeFigurenInGroepRecursive(Groep groep)
+        {
+            var figuren = groep.Figuren.Where(f => f.Geselecteerd).ToList();
+            foreach (var subgroep in groep.Groepen) 
+                figuren.AddRange(GeselecteerdeFigurenInGroepRecursive(subgroep));
+
+            return figuren;
         }
 
         private IEnumerable<Figuur> Figuren()
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
                 .Select(c => c as Figuur);
+        }
+
+        private IEnumerable<Groep> Groepen()
+        {
+            return _componenten.Where(c => c.ComponentType == ComponentType.Groep)
+                .Select(c => c as Groep);
         }
     }
 }

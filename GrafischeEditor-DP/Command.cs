@@ -149,6 +149,7 @@ namespace GrafischeEditor_DP
             _command.Execute();
             _Undo.Push(_command); // voeg nieuw commando toe aan undo stack
             _Redo.Clear(); // leeg redo stack na het toevoegen van een nieuwe actie
+            _command = null;
         }
 
         // undo a command

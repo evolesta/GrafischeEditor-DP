@@ -268,7 +268,8 @@ namespace GrafischeEditor_DP
                     break;
                 case TekenModus.Rectangle:
                 case TekenModus.Ellipse:
-                    invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), ToFiguurType(HuidigeModus)));
+                    if(endpos != startpos)
+                        invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), ToFiguurType(HuidigeModus)));
                     break;
                 case TekenModus.Verwijder:
                     if (ModifyingFigureId >= 0 && endpos == startpos)
@@ -277,8 +278,8 @@ namespace GrafischeEditor_DP
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
-            if(invoker.HasCommand)
+
+            if (invoker.HasCommand) 
                 invoker.Execute();
 
             ModifyingFigureId = -1;

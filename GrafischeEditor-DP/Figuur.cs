@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms.Design;
 
 namespace GrafischeEditor_DP
@@ -50,6 +51,14 @@ namespace GrafischeEditor_DP
         public int Id { get; set; }
         public bool Geselecteerd { get; set; }
         public List<IComponent> Children = new();
+
+        public IEnumerable<Figuur> Figuren =>
+            Children.Where(c => c.ComponentType == ComponentType.Figuur)
+                .Select(c => c as Figuur);
+
+        public IEnumerable<Groep> Groepen =>
+            Children.Where(c => c.ComponentType == ComponentType.Groep)
+                .Select(c => c as Groep);
 
         public void NieuwComponent(IComponent groep)
         {
