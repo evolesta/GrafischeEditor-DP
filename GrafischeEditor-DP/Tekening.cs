@@ -25,12 +25,10 @@ namespace GrafischeEditor_DP
         Controller controller = new Controller(); // controller object
 
         private IEnumerable<IComponent> Componenten() => controller.GetComponents();
-
-        private IEnumerable<Figuur> Figuren () => Componenten()
-            .Where(c => c.ComponentType == ComponentType.Figuur)
-            .Select(c => c as Figuur);
         // genereer command invoker en receiver objecten
         Invoker invoker = new Invoker();
+
+        private IComponent _currentComponent;
 
         public Tekening()
         {
@@ -54,6 +52,11 @@ namespace GrafischeEditor_DP
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
+        }
+
+        private void Draw(Figuur figuur, PaintEventArgs e)
+        {
+            Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
         }
 
         // Methode voor het genereren van een pen om te tekenen
@@ -143,13 +146,37 @@ namespace GrafischeEditor_DP
             treeView.Nodes.Clear(); // leeg TreeView om nieuwe view te genereren
 
             // maak voor ieder figuur een node aan in de treeview
-            foreach (var figuur in controller.GetComponents())
+            foreach (var component in controller.GetComponents())
             {
                 // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
-                treeView.Nodes.Add(new TreeNode(){ Text = figuur.Naam, Tag = figuur });
-            }         
+                var newNode = new TreeNode{ Text = component.Naam, Tag = component  }; 
+                foreach (var groep in controller.Groepen()) 
+                    AddChildNodesRecursive(newNode, groep);
+
+                treeView.Nodes.Add(newNode);
+            }
+
+            
 
             treeView.EndUpdate(); // toon treeview naar GUI
+
+            treeView.ExpandAll();
+        }
+
+        private void AddChildNodesRecursive(TreeNode node, Groep groep)
+        {
+
+            // maak voor ieder figuur een node aan in de treeview
+            foreach (var component in groep.Children)
+            {
+                // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
+                var subNode = new TreeNode() {Text = component.Naam, Tag = component};
+
+                foreach (var subGroep in groep.Groepen)
+                    AddChildNodesRecursive(subNode, groep);
+
+                node.Nodes.Add(subNode);
+            }
         }
 
         // -- Drawpanel mouse actions
@@ -196,14 +223,14 @@ namespace GrafischeEditor_DP
             
             startpos = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = Figuren().LastOrDefault(f => f.Positie.Contains(e.Location));
+            var huidigFiguur = controller.Figuren().LastOrDefault(f => f.Positie.Contains(e.Location));
             if(huidigFiguur is not null) 
                 ModifyingFigureId = huidigFiguur.Id;
 
             switch (HuidigeModus)
             {
                 case TekenModus.Select:
-                    foreach (var figuur in Figuren()) // doorloop alle figuren
+                    foreach (var figuur in controller.Figuren()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(startpos))
@@ -215,7 +242,7 @@ namespace GrafischeEditor_DP
                     }
                     break;
                 case TekenModus.Resize:
-                    foreach (var figuur in Figuren()) // doorloop alle figuren
+                    foreach (var figuur in controller.Figuren()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
                         if (figuur.Positie.Contains(startpos))
@@ -289,9 +316,14 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in Figuren())
+            foreach (var figuur in controller.Figuren())
             {
                 Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
+            }
+
+            foreach (var groep in controller.Groepen())
+            {
+                DrawFiguresRecursive(groep, e);
             }
 
             FillTreeview(); // genereer TreeView met figuren
@@ -311,6 +343,15 @@ namespace GrafischeEditor_DP
             {
                 Draw(ModifyingFigureType, ResizeRectangle(ModifyingRectangle), true, e);
             }
+        }
+
+        private void DrawFiguresRecursive(Groep groep, PaintEventArgs e)
+        {
+            foreach (var figuur in groep.Figuren) 
+                Draw(figuur, e);
+
+            foreach (var subGroep in groep.Groepen) 
+                DrawFiguresRecursive(subGroep, e);
         }
 
 
@@ -383,15 +424,28 @@ namespace GrafischeEditor_DP
         {
             if (e.Button == MouseButtons.Right)
             {
-                var CurrentNode = e.Node.Tag; // verkrijg object uit Node
-                Control c = sender as Control;
+                _currentComponent = e.Node.Tag as IComponent; // verkrijg object uit Node
+                
+                var c = sender as Control;
 
                 // genereer toolstripmenu
-                ContextMenuStrip menu = new ContextMenuStrip();
-                menu.Items.Add("Hernoemen"); // voeg menu items toe
-                menu.Items.Add("Verwijderen");
+                var menu = new ContextMenuStrip();
+                menu.Items.Add("Hernoemen", null, RenameContextMenuItemClick); // voeg menu items toe
+                menu.Items.Add("Verwijderen", null, DeleteContextMenuItemClick);
                 menu.Show(c, e.Location); // toon menu aan gebruiker
+                
             }
+        }
+
+        private void DeleteContextMenuItemClick(object sender, EventArgs e)
+        {
+            invoker.SetCommand(new VerwijderFiguurCommand(controller, _currentComponent.Id));
+            invoker.Execute();
+        }
+
+        private void RenameContextMenuItemClick(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -71,20 +71,21 @@ namespace GrafischeEditor_DP
     class VerwijderFiguurCommand : ICommand
     {
         private Controller _controller;
+        private readonly int _id;
         private Figuur _component;
-        private int _index;
+        private Groep _parent;
 
         // constructor
-        public VerwijderFiguurCommand(Controller controller, int index)
+        public VerwijderFiguurCommand(Controller controller, int id)
         {
             this._controller = controller;
-            this._index = index;
+            _id = id;
         }
 
         public void Execute()
         {
-            this._component = _controller.GetFiguur(_index); // verkrijg oude object voor undo
-            _controller.VerwijderFiguur(_index); // verwijder uit list
+            this._component = _controller.GetFiguur(_id); // verkrijg oude object voor undo
+            _controller.VerwijderFiguur(_id); // verwijder uit list
         }
 
         public void Undo()

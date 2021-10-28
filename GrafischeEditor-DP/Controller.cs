@@ -21,15 +21,15 @@ namespace GrafischeEditor_DP
         public Figuur GetFiguur(int id)
         {
             var figuur = Figuren().FirstOrDefault(f => f.Id == id);
-            if (figuur is null)
+            if (figuur is not null) 
+                return figuur;
+
+            var groepen = Groepen();
+            foreach (var subgroep in groepen)
             {
-                var groepen = Groepen();
-                foreach (var subgroep in groepen)
-                {
-                    figuur = GetFiguur(id, subgroep);
-                    if (figuur is not null)
-                        return figuur;
-                }
+                figuur = GetFiguur(id, subgroep);
+                if (figuur is not null)
+                    return figuur;
             }
 
             return null;
@@ -116,6 +116,23 @@ namespace GrafischeEditor_DP
             var figuur = Figuren().FirstOrDefault(f => f.Id == id);
             if(figuur is not null)
                 _componenten.Remove(figuur); // verwijder object uit de lijst
+            else
+                foreach (var groep in Groepen())
+                    if(VerwijderFiguurUitGroepRecursief(groep, id))
+                        return;
+
+        }
+
+        private bool VerwijderFiguurUitGroepRecursief(Groep groep, int id)
+        {
+            var figuur = groep.Figuren.FirstOrDefault(g => g.Id == id);
+            if (figuur is not null)
+            {
+                groep.Children.Remove(figuur);
+                return true;
+            }
+
+            return groep.Groepen.Any(subGroep => VerwijderFiguurUitGroepRecursief(subGroep, id));
         }
 
         // wijzig de selectie van een figuur
@@ -148,20 +165,10 @@ namespace GrafischeEditor_DP
         {
             var newId = GetNewId();
             var groep = new Groep {Naam = "groep " + newId, Id = newId};
-            _componenten.Add(groep);
             groep.Children = new List<IComponent>();
-            RemoveSelectedFromAllGroups();
             groep.Children.AddRange(Figuren().Where(f => f.Geselecteerd));
-
-        }
-
-        private void RemoveSelectedFromAllGroups()
-        {
-            var selectedFigures = GetAllSelectedFigures();
-            foreach (var figuur in selectedFigures)
-            {
-                
-            }
+            RemoveAllSelectedFigures();
+            _componenten.Add(groep);
         }
 
         private void RemoveAllSelectedFigures()
@@ -170,17 +177,14 @@ namespace GrafischeEditor_DP
             foreach (var groep in Groepen())
             {
                 RemoveSelectedFiguresFromGroupRecursive(groep);
-                groep.Children = groep.Children.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
             }
         }
 
         private void RemoveSelectedFiguresFromGroupRecursive(Groep groep)
         {
             groep.Children = groep.Children.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
-            foreach (var subGroep in groep.Groepen)
-            {
+            foreach (var subGroep in groep.Groepen) 
                 RemoveSelectedFiguresFromGroupRecursive(subGroep);
-            }
         }
 
         private IEnumerable<Figuur> GetAllSelectedFigures()
@@ -202,13 +206,13 @@ namespace GrafischeEditor_DP
             return figuren;
         }
 
-        private IEnumerable<Figuur> Figuren()
+        public IEnumerable<Figuur> Figuren()
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
                 .Select(c => c as Figuur);
         }
 
-        private IEnumerable<Groep> Groepen()
+        public IEnumerable<Groep> Groepen()
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Groep)
                 .Select(c => c as Groep);
