@@ -11,7 +11,7 @@ namespace GrafischeEditor_DP
     public class Controller
     {
         // Variabelen declareren
-        private Bestand bestand = new Bestand();
+        private Bestand.Bestand bestand = new Bestand.Bestand();
         private IList<IComponent> _componenten = new List<IComponent>();
 
         // Geeft de actuele lijst met figuren terug

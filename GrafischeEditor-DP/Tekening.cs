@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using GrafischeEditor_DP.CommandPattern;
+using GrafischeEditor_DP.CommandPattern.Commands;
 
 namespace GrafischeEditor_DP
 {
@@ -396,12 +399,14 @@ namespace GrafischeEditor_DP
         {
             invoker.Undo();
             Refresh();
+            FillTreeview();
         }
 
         private void opnieuwUitvoeren_Click(object sender, EventArgs e)
         {
             invoker.Redo();
             Refresh();
+            FillTreeview();
         }
 
         private static FiguurType ToFiguurType(TekenModus modus)
@@ -430,7 +435,6 @@ namespace GrafischeEditor_DP
 
                 // genereer toolstripmenu
                 var menu = new ContextMenuStrip();
-                menu.Items.Add("Hernoemen", null, RenameContextMenuItemClick); // voeg menu items toe
                 menu.Items.Add("Verwijderen", null, DeleteContextMenuItemClick);
                 menu.Show(c, e.Location); // toon menu aan gebruiker
                 
@@ -443,9 +447,23 @@ namespace GrafischeEditor_DP
             invoker.Execute();
         }
 
-        private void RenameContextMenuItemClick(object sender, EventArgs e)
+        private void treeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            throw new NotImplementedException();
+            IComponent component;
+
+            if (e.Node?.Tag is not null)
+            {
+                component = e.Node.Tag as IComponent;
+
+                invoker.SetCommand(new RenameCommand(component, e.Label));
+                invoker.Execute();
+
+                FillTreeview();
+            }
+            else
+            {
+                e.CancelEdit = true;
+            }
         }
     }
 

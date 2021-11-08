@@ -59,7 +59,8 @@ namespace GrafischeEditor_DP
             this.Bewerken});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(1252, 24);
+            this.MenuStrip.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
+            this.MenuStrip.Size = new System.Drawing.Size(1431, 30);
             this.MenuStrip.TabIndex = 0;
             this.MenuStrip.Text = "menuStrip";
             // 
@@ -70,14 +71,14 @@ namespace GrafischeEditor_DP
             this.OpenBestand,
             this.BestandOpslaan});
             this.Bestand.Name = "Bestand";
-            this.Bestand.Size = new System.Drawing.Size(61, 20);
+            this.Bestand.Size = new System.Drawing.Size(76, 24);
             this.Bestand.Text = "Bestand";
             // 
             // NieuwBestand
             // 
             this.NieuwBestand.Name = "NieuwBestand";
             this.NieuwBestand.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NieuwBestand.Size = new System.Drawing.Size(159, 22);
+            this.NieuwBestand.Size = new System.Drawing.Size(197, 26);
             this.NieuwBestand.Text = "Nieuw";
             this.NieuwBestand.Click += new System.EventHandler(this.NieuwBestand_Click);
             // 
@@ -85,7 +86,7 @@ namespace GrafischeEditor_DP
             // 
             this.OpenBestand.Name = "OpenBestand";
             this.OpenBestand.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenBestand.Size = new System.Drawing.Size(159, 22);
+            this.OpenBestand.Size = new System.Drawing.Size(197, 26);
             this.OpenBestand.Text = "Openen";
             this.OpenBestand.Click += new System.EventHandler(this.OpenBestand_Click);
             // 
@@ -93,7 +94,7 @@ namespace GrafischeEditor_DP
             // 
             this.BestandOpslaan.Name = "BestandOpslaan";
             this.BestandOpslaan.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.BestandOpslaan.Size = new System.Drawing.Size(159, 22);
+            this.BestandOpslaan.Size = new System.Drawing.Size(197, 26);
             this.BestandOpslaan.Text = "Opslaan";
             this.BestandOpslaan.Click += new System.EventHandler(this.BestandOpslaan_Click);
             // 
@@ -103,14 +104,14 @@ namespace GrafischeEditor_DP
             this.ongedaanMaken,
             this.opnieuwUitvoeren});
             this.Bewerken.Name = "Bewerken";
-            this.Bewerken.Size = new System.Drawing.Size(70, 20);
+            this.Bewerken.Size = new System.Drawing.Size(87, 24);
             this.Bewerken.Text = "Bewerken";
             // 
             // ongedaanMaken
             // 
             this.ongedaanMaken.Name = "ongedaanMaken";
             this.ongedaanMaken.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.ongedaanMaken.Size = new System.Drawing.Size(216, 22);
+            this.ongedaanMaken.Size = new System.Drawing.Size(267, 26);
             this.ongedaanMaken.Text = "Ongedaan maken";
             this.ongedaanMaken.Click += new System.EventHandler(this.ongedaanMaken_Click);
             // 
@@ -118,7 +119,7 @@ namespace GrafischeEditor_DP
             // 
             this.opnieuwUitvoeren.Name = "opnieuwUitvoeren";
             this.opnieuwUitvoeren.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.opnieuwUitvoeren.Size = new System.Drawing.Size(216, 22);
+            this.opnieuwUitvoeren.Size = new System.Drawing.Size(267, 26);
             this.opnieuwUitvoeren.Text = "Opnieuw uitvoeren";
             this.opnieuwUitvoeren.Click += new System.EventHandler(this.opnieuwUitvoeren_Click);
             // 
@@ -130,18 +131,20 @@ namespace GrafischeEditor_DP
             this.panel1.Controls.Add(this.ButtonPointer);
             this.panel1.Controls.Add(this.ButtonSquare);
             this.panel1.Controls.Add(this.ButtonEllipse);
-            this.panel1.Location = new System.Drawing.Point(0, 27);
+            this.panel1.Location = new System.Drawing.Point(0, 36);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(115, 602);
+            this.panel1.Size = new System.Drawing.Size(131, 802);
             this.panel1.TabIndex = 1;
             // 
             // ButtonResize
             // 
             this.ButtonResize.Font = new System.Drawing.Font("Webdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ButtonResize.Image = ((System.Drawing.Image)(resources.GetObject("ButtonResize.Image")));
-            this.ButtonResize.Location = new System.Drawing.Point(11, 227);
+            this.ButtonResize.Location = new System.Drawing.Point(13, 303);
+            this.ButtonResize.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ButtonResize.Name = "ButtonResize";
-            this.ButtonResize.Size = new System.Drawing.Size(90, 65);
+            this.ButtonResize.Size = new System.Drawing.Size(103, 87);
             this.ButtonResize.TabIndex = 4;
             this.ButtonResize.UseVisualStyleBackColor = true;
             this.ButtonResize.Click += new System.EventHandler(this.ButtonResize_Click);
@@ -149,9 +152,10 @@ namespace GrafischeEditor_DP
             // ButtonRemove
             // 
             this.ButtonRemove.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ButtonRemove.Location = new System.Drawing.Point(11, 298);
+            this.ButtonRemove.Location = new System.Drawing.Point(13, 397);
+            this.ButtonRemove.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ButtonRemove.Name = "ButtonRemove";
-            this.ButtonRemove.Size = new System.Drawing.Size(90, 65);
+            this.ButtonRemove.Size = new System.Drawing.Size(103, 87);
             this.ButtonRemove.TabIndex = 3;
             this.ButtonRemove.UseVisualStyleBackColor = true;
             this.ButtonRemove.Click += new System.EventHandler(this.ButtonRemove_Click);
@@ -161,9 +165,10 @@ namespace GrafischeEditor_DP
             this.ButtonPointer.AccessibleDescription = "";
             this.ButtonPointer.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ButtonPointer.Image = ((System.Drawing.Image)(resources.GetObject("ButtonPointer.Image")));
-            this.ButtonPointer.Location = new System.Drawing.Point(11, 12);
+            this.ButtonPointer.Location = new System.Drawing.Point(13, 16);
+            this.ButtonPointer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ButtonPointer.Name = "ButtonPointer";
-            this.ButtonPointer.Size = new System.Drawing.Size(90, 65);
+            this.ButtonPointer.Size = new System.Drawing.Size(103, 87);
             this.ButtonPointer.TabIndex = 2;
             this.ButtonPointer.UseVisualStyleBackColor = true;
             this.ButtonPointer.Click += new System.EventHandler(this.ButtonPointer_Click);
@@ -172,9 +177,10 @@ namespace GrafischeEditor_DP
             // 
             this.ButtonSquare.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ButtonSquare.Image = ((System.Drawing.Image)(resources.GetObject("ButtonSquare.Image")));
-            this.ButtonSquare.Location = new System.Drawing.Point(11, 154);
+            this.ButtonSquare.Location = new System.Drawing.Point(13, 205);
+            this.ButtonSquare.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ButtonSquare.Name = "ButtonSquare";
-            this.ButtonSquare.Size = new System.Drawing.Size(90, 65);
+            this.ButtonSquare.Size = new System.Drawing.Size(103, 87);
             this.ButtonSquare.TabIndex = 1;
             this.ButtonSquare.UseVisualStyleBackColor = true;
             this.ButtonSquare.Click += new System.EventHandler(this.ButtonSquare_Click);
@@ -183,9 +189,10 @@ namespace GrafischeEditor_DP
             // 
             this.ButtonEllipse.Font = new System.Drawing.Font("Wingdings", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ButtonEllipse.Image = ((System.Drawing.Image)(resources.GetObject("ButtonEllipse.Image")));
-            this.ButtonEllipse.Location = new System.Drawing.Point(11, 83);
+            this.ButtonEllipse.Location = new System.Drawing.Point(13, 111);
+            this.ButtonEllipse.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ButtonEllipse.Name = "ButtonEllipse";
-            this.ButtonEllipse.Size = new System.Drawing.Size(90, 65);
+            this.ButtonEllipse.Size = new System.Drawing.Size(103, 87);
             this.ButtonEllipse.TabIndex = 0;
             this.ButtonEllipse.UseVisualStyleBackColor = true;
             this.ButtonEllipse.Click += new System.EventHandler(this.ButtonEllipse_Click);
@@ -193,9 +200,10 @@ namespace GrafischeEditor_DP
             // DrawPanel
             // 
             this.DrawPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.DrawPanel.Location = new System.Drawing.Point(121, 27);
+            this.DrawPanel.Location = new System.Drawing.Point(138, 36);
+            this.DrawPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.DrawPanel.Name = "DrawPanel";
-            this.DrawPanel.Size = new System.Drawing.Size(911, 602);
+            this.DrawPanel.Size = new System.Drawing.Size(1041, 802);
             this.DrawPanel.TabIndex = 2;
             this.DrawPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPanel_Paint);
             this.DrawPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawPanel_MouseDown);
@@ -204,17 +212,21 @@ namespace GrafischeEditor_DP
             // 
             // treeView
             // 
-            this.treeView.Location = new System.Drawing.Point(1038, 56);
+            this.treeView.LabelEdit = true;
+            this.treeView.Location = new System.Drawing.Point(1186, 75);
+            this.treeView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(202, 573);
+            this.treeView.Size = new System.Drawing.Size(230, 763);
             this.treeView.TabIndex = 3;
+            this.treeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_AfterLabelEdit);
             this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
             // 
             // btnNieuweGroep
             // 
-            this.btnNieuweGroep.Location = new System.Drawing.Point(1039, 27);
+            this.btnNieuweGroep.Location = new System.Drawing.Point(1187, 36);
+            this.btnNieuweGroep.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnNieuweGroep.Name = "btnNieuweGroep";
-            this.btnNieuweGroep.Size = new System.Drawing.Size(201, 23);
+            this.btnNieuweGroep.Size = new System.Drawing.Size(230, 31);
             this.btnNieuweGroep.TabIndex = 4;
             this.btnNieuweGroep.Text = "Nieuwe groep";
             this.btnNieuweGroep.UseVisualStyleBackColor = true;
@@ -222,15 +234,16 @@ namespace GrafischeEditor_DP
             // 
             // Tekening
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1252, 641);
+            this.ClientSize = new System.Drawing.Size(1431, 855);
             this.Controls.Add(this.btnNieuweGroep);
             this.Controls.Add(this.treeView);
             this.Controls.Add(this.DrawPanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.MenuStrip);
             this.MainMenuStrip = this.MenuStrip;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Tekening";
             this.Text = "Grafische Editor";
             this.MenuStrip.ResumeLayout(false);

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace GrafischeEditor_DP
+namespace GrafischeEditor_DP.Bestand
 {
     /// <summary>
     /// 'Receiver' class Bestand voor File I/O
