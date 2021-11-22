@@ -218,7 +218,7 @@ namespace GrafischeEditor_DP
             this.treeView.Name = "treeView";
             this.treeView.Size = new System.Drawing.Size(230, 763);
             this.treeView.TabIndex = 3;
-            this.treeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_AfterLabelEdit);
+            this.treeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.TreeView_AfterLabelEdit);
             this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
             // 
             // btnNieuweGroep

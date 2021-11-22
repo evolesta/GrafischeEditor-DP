@@ -447,11 +447,11 @@ namespace GrafischeEditor_DP
             invoker.Execute();
         }
 
-        private void treeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        private void TreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             IComponent component;
 
-            if (e.Node?.Tag is not null)
+            if (e.Node?.Tag is not null && !string.IsNullOrWhiteSpace(e.Label))
             {
                 component = e.Node.Tag as IComponent;
 

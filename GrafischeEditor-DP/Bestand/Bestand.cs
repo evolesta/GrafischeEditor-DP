@@ -7,20 +7,20 @@ namespace GrafischeEditor_DP.Bestand
     /// <summary>
     /// 'Receiver' class Bestand voor File I/O
     /// </summary>
-    class Bestand
+    public static class BestandIo
     {
         // leest het xml bestand uit en deserialized de content terug naar een list van objecten
-        public List<IComponent> Open(string Bestandspad)
+        public static List<IComponent> Open(string Bestandspad)
         {
-            FileStream fileStream = new FileStream(Bestandspad, FileMode.Open);
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Figuur>));
+            var fileStream = new FileStream(Bestandspad, FileMode.Open);
+            var serializer = new XmlSerializer(typeof(List<Figuur>));
             var figuren = (List<IComponent>)serializer.Deserialize(fileStream);
             fileStream.Close(); // sluit geopend bestand
             return figuren; // geeft lijst terug
         }
 
         // serialized de list van objecten naar een XML bestand op schijf
-        public void Opslaan(string Bestandspad, IList<IComponent> componenten)
+        public static void Opslaan(string Bestandspad, IList<IComponent> componenten)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(List<Figuur>));
             FileStream filestream = new FileStream(Bestandspad, FileMode.Create);
