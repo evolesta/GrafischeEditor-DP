@@ -35,6 +35,29 @@ namespace GrafischeEditor_DP
             return null;
         }
 
+        public Groep GetGroep(int id, Groep ancestor = null)
+        {
+
+            IEnumerable<Groep> groepen;
+            if (ancestor is null)
+                groepen = Groepen();
+            else
+                groepen = ancestor.Groepen;
+
+            var groep = groepen.FirstOrDefault(f => f.Id == id);
+            if (groep is not null)
+                return groep;
+
+            foreach (var subgroep in groepen)
+            {
+                groep = GetGroep(id, subgroep);
+                if (groep is not null)
+                    return groep;
+            }
+
+            return null;
+        }
+
         // Geeft een enkel figuur uit de lijst terug
         public Figuur GetFiguur(int id, Groep groep)
         {
@@ -114,11 +137,11 @@ namespace GrafischeEditor_DP
         public void VerwijderFiguur(int id)
         {
             var figuur = Figuren().FirstOrDefault(f => f.Id == id);
-            if(figuur is not null)
+            if (figuur is not null)
                 _componenten.Remove(figuur); // verwijder object uit de lijst
             else
                 foreach (var groep in Groepen())
-                    if(VerwijderFiguurUitGroepRecursief(groep, id))
+                    if (VerwijderFiguurUitGroepRecursief(groep, id))
                         return;
 
         }
@@ -133,6 +156,31 @@ namespace GrafischeEditor_DP
             }
 
             return groep.Groepen.Any(subGroep => VerwijderFiguurUitGroepRecursief(subGroep, id));
+        }
+
+        // verwijder figuur object uit de lijst
+        public void VerwijderGroep(int id)
+        {
+            var groep = Groepen().FirstOrDefault(f => f.Id == id);
+            if (groep is not null)
+                _componenten.Remove(groep); // verwijder object uit de lijst
+            else
+                foreach (var subGroep in Groepen())
+                    if (VerwijderGroepUitGroepRecursief(subGroep, id))
+                        return;
+
+        }
+
+        private bool VerwijderGroepUitGroepRecursief(Groep parent, int id)
+        {
+            var groep = parent.Groepen.FirstOrDefault(g => g.Id == id);
+            if (groep is not null)
+            {
+                parent.Children.Remove(groep);
+                return true;
+            }
+
+            return parent.Groepen.Any(subGroep => VerwijderFiguurUitGroepRecursief(subGroep, id));
         }
 
         // wijzig de selectie van een figuur

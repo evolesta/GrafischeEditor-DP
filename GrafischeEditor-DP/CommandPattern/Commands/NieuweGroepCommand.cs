@@ -23,8 +23,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Undo()
         {
-            throw new NotImplementedException();
-            //remove groep met _id;
+            _controller.VerwijderGroep(_id);
         }
     }
 }
