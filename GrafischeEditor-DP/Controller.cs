@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using GrafischeEditor_DP.Bestand;
 
 namespace GrafischeEditor_DP
 {
@@ -11,7 +12,6 @@ namespace GrafischeEditor_DP
     public class Controller
     {
         // Variabelen declareren
-        private Bestand.Bestand bestand = new Bestand.Bestand();
         private IList<IComponent> _componenten = new List<IComponent>();
 
         // Geeft de actuele lijst met figuren terug
@@ -153,12 +153,12 @@ namespace GrafischeEditor_DP
         public void OpenBestand(string Bestandspad)
         {
             ResetComponents(); // leeg lijst met figuren
-            _componenten = bestand.Open(Bestandspad); // lees XML bestand en plaats figuren in list
+            _componenten = BestandIo.Open(Bestandspad); // lees XML bestand en plaats figuren in list
         }
 
         public void OpslaanBestand(string Bestandspad)
         {
-            bestand.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
+            BestandIo.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
         }
 
         public void NieuweGroep()
