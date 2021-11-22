@@ -161,7 +161,7 @@ namespace GrafischeEditor_DP
             BestandIo.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
         }
 
-        public void NieuweGroep()
+        public int NieuweGroep()
         {
             var newId = GetNewId();
             var groep = new Groep {Naam = "groep " + newId, Id = newId};
@@ -169,6 +169,8 @@ namespace GrafischeEditor_DP
             groep.Children.AddRange(Figuren().Where(f => f.Geselecteerd));
             RemoveAllSelectedFigures();
             _componenten.Add(groep);
+
+            return newId;
         }
 
         private void RemoveAllSelectedFigures()

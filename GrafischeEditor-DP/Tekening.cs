@@ -153,13 +153,12 @@ namespace GrafischeEditor_DP
             {
                 // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
                 var newNode = new TreeNode{ Text = component.Naam, Tag = component  }; 
-                foreach (var groep in controller.Groepen()) 
+                
+                if(component is Groep groep)
                     AddChildNodesRecursive(newNode, groep);
 
                 treeView.Nodes.Add(newNode);
             }
-
-            
 
             treeView.EndUpdate(); // toon treeview naar GUI
 
@@ -176,7 +175,7 @@ namespace GrafischeEditor_DP
                 var subNode = new TreeNode() {Text = component.Naam, Tag = component};
 
                 foreach (var subGroep in groep.Groepen)
-                    AddChildNodesRecursive(subNode, groep);
+                    AddChildNodesRecursive(subNode, subGroep);
 
                 node.Nodes.Add(subNode);
             }
@@ -421,7 +420,8 @@ namespace GrafischeEditor_DP
 
         private void btnNieuweGroep_Click(object sender, EventArgs e)
         {
-            controller.NieuweGroep();
+            invoker.SetCommand(new NieuweGroepCommand(controller));
+            invoker.Execute();
             FillTreeview();
         }
 
