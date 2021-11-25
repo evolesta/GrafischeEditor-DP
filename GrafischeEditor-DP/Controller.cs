@@ -77,20 +77,62 @@ namespace GrafischeEditor_DP
             return null;
         }
 
-        // maak nieuw figuur object aan en voeg toe aan de list
-        public int NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur)
+        public Groep FindParentGroep(int childId, Groep ancestor = null)
         {
+            IComponent child;
+            IEnumerable<Groep> groepen;
+            if (ancestor is null)
+            {
+                child = _componenten.FirstOrDefault(c => c.Id == childId);
+                if (child is not null)
+                    return null;
 
-            var newId = GetNewId();//ids.Max() + 1;
+                groepen = Groepen();
+            }
+            else
+            {
+                child = ancestor.Children.FirstOrDefault(c => c.Id == childId);
+                if (child is not null)
+                    return ancestor;
+
+                groepen = ancestor.Groepen;
+            }
+            
+
+            foreach (var subgroep in groepen)
+            {
+                var parent = FindParentGroep(childId, subgroep);
+                if (parent is not null)
+                    return parent;
+            }
+
+            return null;
+        }
+
+        // maak nieuw figuur object aan en voeg toe aan de list
+        public int NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur, int? parentGroupId)
+        {
+            var newId = GetNewId();
+
             // voeg nieuw object toe aan de list
-            _componenten.Add(new Figuur()
+            var figuur = new Figuur()
             {
                 Id = newId, 
                 Naam = "figuur " + newId, 
                 Positie = rectangle, 
                 Type = soortFiguur, 
                 Geselecteerd = false
-            });
+            };
+
+            if (parentGroupId is null)
+            {
+                _componenten.Add(figuur);
+            }
+            else
+            {
+                var parent = GetGroep(parentGroupId.Value);
+                parent.Children.Add(figuur);
+            }
 
             return newId;
         }
@@ -209,14 +251,23 @@ namespace GrafischeEditor_DP
             BestandIo.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
         }
 
-        public int NieuweGroep()
+        public int NieuweGroep(int? parentGroupId = null)
         {
             var newId = GetNewId();
             var groep = new Groep {Naam = "groep " + newId, Id = newId};
             groep.Children = new List<IComponent>();
             groep.Children.AddRange(Figuren().Where(f => f.Geselecteerd));
             RemoveAllSelectedFigures();
-            _componenten.Add(groep);
+
+            if (parentGroupId is null)
+            {
+                _componenten.Add(groep);
+            }
+            else
+            {
+                var parent = GetGroep(parentGroupId.Value);
+                parent.Children.Add(groep);
+            }
 
             return newId;
         }

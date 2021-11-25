@@ -10,19 +10,22 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
         private Controller _controller;
         private Rectangle _rectangle;
         private FiguurType _soortFiguur;
+        private readonly int? _parentGroupId;
         private int _id;
 
         // constructor
-        public NieuwFiguurCommand(Controller controller, Rectangle rectangle, FiguurType soortFiguur)
+        public NieuwFiguurCommand(Controller controller, Rectangle rectangle, FiguurType soortFiguur,
+            int? parentGroupId)
         {
             this._controller = controller;
             this._rectangle = rectangle;
             this._soortFiguur = soortFiguur;
+            _parentGroupId = parentGroupId;
         }
 
         public void Execute()
         {
-            _id = _controller.NieuwFiguur(_rectangle, _soortFiguur);
+            _id = _controller.NieuwFiguur(_rectangle, _soortFiguur, _parentGroupId);
         }
 
         public void Undo()

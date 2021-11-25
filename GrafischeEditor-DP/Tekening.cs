@@ -174,7 +174,7 @@ namespace GrafischeEditor_DP
                 // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
                 var subNode = new TreeNode() {Text = component.Naam, Tag = component};
 
-                foreach (var subGroep in groep.Groepen)
+                if(component is Groep subGroep)
                     AddChildNodesRecursive(subNode, subGroep);
 
                 node.Nodes.Add(subNode);
@@ -297,8 +297,16 @@ namespace GrafischeEditor_DP
                     break;
                 case TekenModus.Rectangle:
                 case TekenModus.Ellipse:
-                    if(endpos != startpos)
-                        invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(), ToFiguurType(HuidigeModus)));
+                    if (endpos != startpos)
+                    {
+                        int? selectedGroupId = null;
+                        if (treeView.SelectedNode is not null)
+                            selectedGroupId = ((IComponent)treeView.SelectedNode.Tag).Id;
+
+                        invoker.SetCommand(new NieuwFiguurCommand(controller, GetRectangle(),
+                            ToFiguurType(HuidigeModus), selectedGroupId));
+                    }
+
                     break;
                 case TekenModus.Verwijder:
                     if (ModifyingFigureId >= 0 && endpos == startpos)
@@ -420,7 +428,11 @@ namespace GrafischeEditor_DP
 
         private void btnNieuweGroep_Click(object sender, EventArgs e)
         {
-            invoker.SetCommand(new NieuweGroepCommand(controller));
+            int? selectedGroupId = null;
+            if (treeView.SelectedNode is not null)
+                selectedGroupId = ((IComponent)treeView.SelectedNode.Tag).Id;
+
+            invoker.SetCommand(new NieuweGroepCommand(controller, selectedGroupId));
             invoker.Execute();
             FillTreeview();
         }

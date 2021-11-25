@@ -12,6 +12,7 @@
         {
             this._controller = controller;
             _id = id;
+            _parent = _controller.FindParentGroep(id);
         }
 
         public void Execute()
@@ -22,7 +23,7 @@
 
         public void Undo()
         {
-            _controller.NieuwFiguur(_component.Positie, _component.Type); // voeg oude object opnieuw toe aan list
+            _controller.NieuwFiguur(_component.Positie, _component.Type, _parent?.Id); // voeg oude object opnieuw toe aan list
         }
     }
 }
