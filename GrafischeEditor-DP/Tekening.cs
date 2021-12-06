@@ -39,7 +39,6 @@ namespace GrafischeEditor_DP
 
         #region EVENTHANDLERS
 
-
         // -- Drawpanel mouse actions
 
         // optie op ellipsen te tekenen
@@ -80,20 +79,19 @@ namespace GrafischeEditor_DP
         private void DrawPanel_MouseDown(object sender, MouseEventArgs e)
         {
             _isMouseDown = true;
-            _isDrawing = IsInTekenModus();
+            _isDrawing = IsInDrawingMode();
             
             _mouseDragStartPosition = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = _controller.Figuren().LastOrDefault(f => f.Positie.Contains(e.Location));
+            var huidigFiguur = _controller.AllFiguresFlattened().LastOrDefault(f => f.Positie.Contains(e.Location));
             if(huidigFiguur is not null) 
                 _modifyingFigureId = huidigFiguur.Id;
 
             switch (_currentMode)
             {
                 case TekenModus.Select:
-                    foreach (var figuur in _controller.Figuren()) // doorloop alle figuren
+                    foreach (var figuur in _controller.AllFiguresFlattened()) // doorloop alle figuren
                     {
-                        // controleren of figuur zich in muispositie bevindt
                         if (figuur.Positie.Contains(_mouseDragStartPosition))
                         {
                             _isMoving = true; // zet boolean op beweegmodus
@@ -103,7 +101,7 @@ namespace GrafischeEditor_DP
                     }
                     break;
                 case TekenModus.Resize:
-                    foreach (var figuur in _controller.Figuren()) // doorloop alle figuren
+                    foreach (var figuur in _controller.AllFiguresFlattened()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
                         if (figuur.Positie.Contains(_mouseDragStartPosition))
@@ -114,12 +112,18 @@ namespace GrafischeEditor_DP
                         }
                     }
                     break;
+                case TekenModus.Rectangle:
+                case TekenModus.Ellipse:
+                case TekenModus.Verwijder:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        private bool IsInTekenModus()
+        private bool IsInDrawingMode()
         {
-            return _currentMode == TekenModus.Ellipse || _currentMode == TekenModus.Rectangle;
+            return _currentMode is TekenModus.Ellipse or TekenModus.Rectangle;
         }
 
         private void DrawPanel_MouseMove(object sender, MouseEventArgs e)
@@ -278,7 +282,7 @@ namespace GrafischeEditor_DP
         private void btnNieuweGroep_Click(object sender, EventArgs e)
         {
             int? selectedGroupId = null;
-            if (treeView.SelectedNode is not null)
+            if (treeView.SelectedNode?.Tag is Groep)
                 selectedGroupId = ((IComponent)treeView.SelectedNode.Tag).Id;
 
             _invoker.SetCommand(new NieuweGroepCommand(_controller, selectedGroupId));
@@ -288,9 +292,15 @@ namespace GrafischeEditor_DP
 
         private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            //_controller.ClearSelection();
+
+            _currentComponent = e.Node.Tag as IComponent; // verkrijg object uit Node
+            _currentComponent.Geselecteerd = true;
+
+
+
             if (e.Button == MouseButtons.Right)
             {
-                _currentComponent = e.Node.Tag as IComponent; // verkrijg object uit Node
                 
                 var c = sender as Control;
 
@@ -298,9 +308,8 @@ namespace GrafischeEditor_DP
                 var menu = new ContextMenuStrip();
                 menu.Items.Add("Verwijderen", null, DeleteContextMenuItemClick);
 
-                if (e.Node.Tag is Groep groep)
+                if (e.Node.Tag is Groep)
                 {
-                    groep.Geselecteerd = true;
                     menu.Items.Add("Groep toevoegen", null, AddChildGoupMenuItemClick);
                 }
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using GrafischeEditor_DP.Bestand;
 
 namespace GrafischeEditor_DP
@@ -228,9 +227,10 @@ namespace GrafischeEditor_DP
         // wijzig de selectie van een figuur
         public void WijzigSelectie(int id)
         {
-            // pas boolean waarde aan in object door bitwise X-OR met true
-            var component = _componenten.FirstOrDefault(c => c.Id == id);
+            var component = GetFiguur(id) as IComponent;
+            component ??= GetGroep(id);
             if(component is not null)
+                // pas boolean waarde aan in object door bitwise X-OR met true
                 component.Geselecteerd ^= true;
         }
 
@@ -311,6 +311,26 @@ namespace GrafischeEditor_DP
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
                 .Select(c => c as Figuur);
+        }
+
+        public IEnumerable<Figuur> AllFiguresFlattened()
+        {
+            var figures = Figuren();
+            foreach (var groep in Groepen())
+            {
+                AddFiguresRecursive(figures, groep);
+            }
+
+            return figures;
+        }
+
+        private static void AddFiguresRecursive(IEnumerable<Figuur> figures, Groep groep)
+        {
+            figures.Concat(groep.Children.Where(c => c.ComponentType == ComponentType.Figuur).Select(c => c as Figuur));
+            foreach (var component in groep.Children.Where(c => c.ComponentType == ComponentType.Groep))
+            {
+                AddFiguresRecursive(figures, component as Groep);
+            }
         }
 
         public IEnumerable<Groep> Groepen()
