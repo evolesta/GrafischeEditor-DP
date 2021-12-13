@@ -95,8 +95,8 @@ namespace GrafischeEditor_DP
                         if (figuur.Positie.Contains(_mouseDragStartPosition))
                         {
                             _isMoving = true; // zet boolean op beweegmodus
-                            _modifyingRectangle = _controller.GetFiguur(_modifyingFigureId).Positie; // verkrijg rectangle van object
-                            _modifyingFigureType = _controller.GetFiguur(_modifyingFigureId).Type; // verkrijg soort figuur
+                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Positie; // verkrijg rectangle van object
+                            _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
@@ -107,8 +107,8 @@ namespace GrafischeEditor_DP
                         if (figuur.Positie.Contains(_mouseDragStartPosition))
                         {
                             _isResizing = true; // zet boolean actief resizing
-                            _modifyingRectangle = _controller.GetFiguur(_modifyingFigureId).Positie; // verkrijg rectangle van object
-                            _modifyingFigureType = _controller.GetFiguur(_modifyingFigureId).Type; // verkrijg soort figuur
+                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Positie; // verkrijg rectangle van object
+                            _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
@@ -173,7 +173,7 @@ namespace GrafischeEditor_DP
                     break;
                 case TekenModus.Verwijder:
                     if (_modifyingFigureId >= 0 && _mouseDragEndPosition == _mouseDragStartPosition)
-                        _invoker.SetCommand(new VerwijderFiguurCommand(_controller, _modifyingFigureId));
+                        _invoker.SetCommand(new RemoveComponentCommand(_controller, _modifyingFigureId));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -326,7 +326,7 @@ namespace GrafischeEditor_DP
 
         private void DeleteContextMenuItemClick(object sender, EventArgs e)
         {
-            _invoker.SetCommand(new VerwijderFiguurCommand(_controller, _currentComponent.Id));
+            _invoker.SetCommand(new RemoveComponentCommand(_controller, _currentComponent.Id));
             _invoker.Execute();
         }
 

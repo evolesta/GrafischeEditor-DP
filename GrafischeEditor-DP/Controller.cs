@@ -17,7 +17,7 @@ namespace GrafischeEditor_DP
         public IEnumerable<IComponent> GetComponents() { return _componenten; }
 
         // Geeft een enkel figuur uit de lijst terug
-        public Figuur GetFiguur(int id)
+        public Figuur GetFigure(int id)
         {
             var figuur = Figuren().FirstOrDefault(f => f.Id == id);
             if (figuur is not null) 
@@ -174,60 +174,34 @@ namespace GrafischeEditor_DP
                 figuur.Positie = rectangle; // wijzig rectangle x-y en grootte
         }
 
-        // verwijder figuur object uit de lijst
-        public void VerwijderFiguur(int id)
+        public void RemoveComponent(int id)
         {
-            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
-            if (figuur is not null)
-                _componenten.Remove(figuur); // verwijder object uit de lijst
+            var component = _componenten.FirstOrDefault(f => f.Id == id);
+            if(component is not null)
+                _componenten.Remove(component);
             else
                 foreach (var groep in Groepen())
-                    if (VerwijderFiguurUitGroepRecursief(groep, id))
+                    // If we find the component, no need to proceed to remaining groups, so return:
+                    if (RemoveComponentFromGroupRecursive(groep, id))
                         return;
-
         }
 
-        private bool VerwijderFiguurUitGroepRecursief(Groep groep, int id)
+        private static bool RemoveComponentFromGroupRecursive(Groep groep, int id)
         {
-            var figuur = groep.Figuren.FirstOrDefault(g => g.Id == id);
-            if (figuur is not null)
+            var component = groep.Children.FirstOrDefault(c => c.Id == id);
+            if (component is not null)
             {
-                groep.Children.Remove(figuur);
+                groep.Children.Remove(component);
                 return true;
             }
 
-            return groep.Groepen.Any(subGroep => VerwijderFiguurUitGroepRecursief(subGroep, id));
-        }
-
-        // verwijder figuur object uit de lijst
-        public void VerwijderGroep(int id)
-        {
-            var groep = Groepen().FirstOrDefault(f => f.Id == id);
-            if (groep is not null)
-                _componenten.Remove(groep); // verwijder object uit de lijst
-            else
-                foreach (var subGroep in Groepen())
-                    if (VerwijderGroepUitGroepRecursief(subGroep, id))
-                        return;
-
-        }
-
-        private bool VerwijderGroepUitGroepRecursief(Groep parent, int id)
-        {
-            var groep = parent.Groepen.FirstOrDefault(g => g.Id == id);
-            if (groep is not null)
-            {
-                parent.Children.Remove(groep);
-                return true;
-            }
-
-            return parent.Groepen.Any(subGroep => VerwijderFiguurUitGroepRecursief(subGroep, id));
+            return groep.Groepen.Any(subGroup => RemoveComponentFromGroupRecursive(subGroup, id));
         }
 
         // wijzig de selectie van een figuur
         public void WijzigSelectie(int id)
         {
-            var component = GetFiguur(id) as IComponent;
+            var component = GetFigure(id) as IComponent;
             component ??= GetGroep(id);
             if(component is not null)
                 // pas boolean waarde aan in object door bitwise X-OR met true
@@ -270,6 +244,11 @@ namespace GrafischeEditor_DP
             }
 
             return newId;
+        }
+
+        public void AddGroup(Groep group)
+        {
+            _componenten.Add(group);
         }
 
         private void RemoveAllSelectedFigures()

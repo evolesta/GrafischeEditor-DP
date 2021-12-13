@@ -4,7 +4,7 @@
     {
         private readonly Controller _controller;
         private int _id;
-        private int? _parentGroupId;
+        private readonly int? _parentGroupId;
 
         public NieuweGroepCommand(Controller controller, int? parentGroupId)
         {
@@ -19,7 +19,7 @@
 
         public void Undo()
         {
-            _controller.VerwijderGroep(_id);
+            _controller.RemoveComponent(_id);
         }
     }
 }

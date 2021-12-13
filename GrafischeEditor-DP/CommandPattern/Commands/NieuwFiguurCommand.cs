@@ -30,7 +30,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Undo()
         {
-            _controller.VerwijderFiguur(_id); // verwijder object uit list
+            _controller.RemoveComponent(_id); // verwijder object
         }
     }
 }
