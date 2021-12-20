@@ -17,7 +17,7 @@
 
         public void Execute()
         {
-            this._component = _controller.GetFigure(_id); // verkrijg oude object voor undo
+            this._component = _controller.GetComponent(_id); // verkrijg oude object voor undo
             _controller.RemoveComponent(_id); // verwijder uit list
         }
 

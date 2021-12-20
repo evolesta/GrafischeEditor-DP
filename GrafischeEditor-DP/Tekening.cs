@@ -79,7 +79,7 @@ namespace GrafischeEditor_DP
         private void DrawPanel_MouseDown(object sender, MouseEventArgs e)
         {
             _isMouseDown = true;
-            _isDrawing = IsInDrawingMode();
+            _isDrawing = IsInDrawingMode() && _mouseDragStartPosition != _mouseDragEndPosition;
             
             _mouseDragStartPosition = e.Location; // bewaar X Y positie startpunt
 
@@ -141,7 +141,10 @@ namespace GrafischeEditor_DP
             _isMouseDown = false;
             _mouseDragEndPosition = e.Location;
             _isMoving = false;
-            _isResizing = false;
+            _isResizing = false; 
+            _isDrawing = false;
+
+            var selectedGroupId = _controller.SelectedGroupId();
 
             switch (_currentMode)
             {
@@ -151,21 +154,35 @@ namespace GrafischeEditor_DP
                         if (_mouseDragEndPosition == _mouseDragStartPosition)
                             _controller.WijzigSelectie(_modifyingFigureId);
                         else
-                            _invoker.SetCommand(new BewerkFiguurCommand(_controller, MoveRectangle(_modifyingRectangle), _modifyingFigureId));
+                        {
+                            if (selectedGroupId.HasValue)
+                            {
+                                var moveX = _mouseDragEndPosition.X - _mouseDragStartPosition.X;
+                                var moveY = _mouseDragEndPosition.Y - _mouseDragStartPosition.Y;
+                                _invoker.SetCommand(new BewerkGroepCommand(_controller, selectedGroupId.Value, moveX, moveY));
+                            }
+                            else
+                                _invoker.SetCommand(new BewerkFiguurCommand(_controller, MoveRectangle(_modifyingRectangle), _modifyingFigureId));
+
+                        }
                     }
                     break;
                 case TekenModus.Resize:
                     if (_modifyingFigureId >= 0 && _mouseDragEndPosition != _mouseDragStartPosition)
+                    {
+                        if (selectedGroupId.HasValue)
+                        {
+                            //als geheel resizen
+
+                        }
+
                         _invoker.SetCommand(new BewerkFiguurCommand(_controller, ResizeRectangle(_modifyingRectangle), _modifyingFigureId));
+                    }
                     break;
                 case TekenModus.Rectangle:
                 case TekenModus.Ellipse:
                     if (_mouseDragEndPosition != _mouseDragStartPosition)
                     {
-                        int? selectedGroupId = null;
-                        if (treeView.SelectedNode is not null)
-                            selectedGroupId = ((IComponent)treeView.SelectedNode.Tag).Id;
-
                         _invoker.SetCommand(new NieuwFiguurCommand(_controller, GetRectangle(),
                             ToFiguurType(_currentMode), selectedGroupId));
                     }
@@ -183,6 +200,7 @@ namespace GrafischeEditor_DP
                 _invoker.Execute();
 
             _modifyingFigureId = -1;
+
             Refresh(); // ververs drawpanel zodat het nieuwe figuur zichtbaar wordt
         }
 
@@ -292,42 +310,54 @@ namespace GrafischeEditor_DP
 
         private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            //_controller.ClearSelection();
-
             _currentComponent = e.Node.Tag as IComponent; // verkrijg object uit Node
-            _currentComponent.Geselecteerd = true;
+            var treeView = sender as TreeView;
+            treeView.SelectedNode = e.Node;
 
-
-
-            if (e.Button == MouseButtons.Right)
+            switch (e.Button)
             {
-                
-                var c = sender as Control;
-
-                // genereer toolstripmenu
-                var menu = new ContextMenuStrip();
-                menu.Items.Add("Verwijderen", null, DeleteContextMenuItemClick);
-
-                if (e.Node.Tag is Groep)
+                case MouseButtons.Right:
                 {
-                    menu.Items.Add("Groep toevoegen", null, AddChildGoupMenuItemClick);
-                }
+                    // genereer toolstripmenu
+                    var menu = new ContextMenuStrip();
+                    menu.Items.Add("Verwijderen", null, DeleteContextMenuItemClick);
 
-                menu.Show(c, e.Location); // toon menu aan gebruiker
+                    if (e.Node.Tag is Groep)
+                    {
+                        menu.Items.Add("Groep toevoegen", null, AddChildGroupMenuItemClick);
+                    }
+
+                    menu.Show(treeView, e.Location); // toon menu aan gebruiker
+                    break;
+                }
+                case MouseButtons.Left:
+                    _controller.ClearSelection();
+                    _currentComponent.Geselecteerd = true;
+                    if(_currentComponent is Groep groep)
+                        _controller.SelectGroupRecursive(groep);
+                    Refresh();
+                    FillTreeview();
+                    break;
+                default:
+                    break;
             }
         }
 
-        private void AddChildGoupMenuItemClick(object? sender, EventArgs e)
+        private void AddChildGroupMenuItemClick(object? sender, EventArgs e)
         {
             var command = new NieuweGroepCommand(_controller, _currentComponent.Id);
             _invoker.SetCommand(command);
             _invoker.Execute();
+            FillTreeview();
         }
 
         private void DeleteContextMenuItemClick(object sender, EventArgs e)
         {
             _invoker.SetCommand(new RemoveComponentCommand(_controller, _currentComponent.Id));
             _invoker.Execute();
+            Refresh();
+            FillTreeview();
+
         }
 
         private void TreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
@@ -402,14 +432,13 @@ namespace GrafischeEditor_DP
             return rectangle;
         }
 
-        // methode om de plaating van het figuur op de x- en y-as opnieuw te berekenen
-        private Rectangle MoveRectangle(Rectangle currRectangle)
+        // methode om de plaatsing van het figuur op de x- en y-as opnieuw te berekenen
+        private Rectangle MoveRectangle(Rectangle rectangle)
         {
-            var rectangle = new Rectangle();
-            rectangle.X = _mouseDragEndPosition.X;
-            rectangle.Y = _mouseDragEndPosition.Y;
-            rectangle.Width = currRectangle.Width; // waarde veranderd niet bij verplaatsen
-            rectangle.Height = currRectangle.Height; // waarde veranderd niet bij verplaatsen
+            var moveRight = _mouseDragEndPosition.X - _mouseDragStartPosition.X;
+            rectangle.X += moveRight;
+            var moveDown = _mouseDragEndPosition.Y - _mouseDragStartPosition.Y;
+            rectangle.Y += moveDown;
             return rectangle;
         }
 
@@ -470,9 +499,11 @@ namespace GrafischeEditor_DP
                 var newNode = new TreeNode { Text = component.Naam, Tag = component };
 
                 if (component is Groep groep)
-                    AddChildNodesRecursive(newNode, groep);
+                    AddChildNodesRecursive(newNode, groep, treeView);
 
                 treeView.Nodes.Add(newNode);
+                if (component.Geselecteerd)
+                    treeView.SelectedNode = newNode;
             }
 
             treeView.EndUpdate(); // toon treeview naar GUI
@@ -480,7 +511,7 @@ namespace GrafischeEditor_DP
             treeView.ExpandAll();
         }
 
-        private static void AddChildNodesRecursive(TreeNode node, Groep groep)
+        private static void AddChildNodesRecursive(TreeNode node, Groep groep, TreeView treeView)
         {
 
             // maak voor ieder figuur een node aan in de treeview
@@ -490,9 +521,11 @@ namespace GrafischeEditor_DP
                 var subNode = new TreeNode { Text = component.Naam, Tag = component };
 
                 if (component is Groep subGroep)
-                    AddChildNodesRecursive(subNode, subGroep);
+                    AddChildNodesRecursive(subNode, subGroep, treeView);
 
                 node.Nodes.Add(subNode);
+                if (component.Geselecteerd)
+                    treeView.SelectedNode = subNode;
             }
         }
 

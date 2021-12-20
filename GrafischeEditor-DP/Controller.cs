@@ -17,59 +17,35 @@ namespace GrafischeEditor_DP
         public IEnumerable<IComponent> GetComponents() { return _componenten; }
 
         // Geeft een enkel figuur uit de lijst terug
-        public Figuur GetFigure(int id)
+        public IComponent GetComponent(int id)
         {
-            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
-            if (figuur is not null) 
-                return figuur;
+            var component = _componenten.FirstOrDefault(f => f.Id == id);
+            if (component is not null) 
+                return component;
 
             var groepen = Groepen();
-            foreach (var subgroep in groepen)
+            foreach (var groep in groepen)
             {
-                figuur = GetFiguur(id, subgroep);
-                if (figuur is not null)
-                    return figuur;
-            }
-
-            return null;
-        }
-
-        public Groep GetGroep(int id, Groep ancestor = null)
-        {
-
-            IEnumerable<Groep> groepen;
-            if (ancestor is null)
-                groepen = Groepen();
-            else
-                groepen = ancestor.Groepen;
-
-            var groep = groepen.FirstOrDefault(f => f.Id == id);
-            if (groep is not null)
-                return groep;
-
-            foreach (var subgroep in groepen)
-            {
-                groep = GetGroep(id, subgroep);
-                if (groep is not null)
-                    return groep;
+                component = GetComponent(id, groep);
+                if (component is not null)
+                    return component;
             }
 
             return null;
         }
 
         // Geeft een enkel figuur uit de lijst terug
-        public Figuur GetFiguur(int id, Groep groep)
+        public IComponent GetComponent(int id, Groep groep)
         {
-            var figuren = groep.Children.Where(c => c.ComponentType == ComponentType.Figuur);
-            var figuur = figuren.FirstOrDefault(f => f.Id == id);
-            if (figuur is null)
+            var component = groep.Children.FirstOrDefault(f => f.Id == id);
+            if (component is null)
             {
                 var groepen = groep.Children.Where(g => g.ComponentType == ComponentType.Groep);
                 foreach (var subgroep in groepen)
                 {
-                    figuur = GetFiguur(id, subgroep as Groep);
-                    if (figuur is not null)
-                        return figuur as Figuur;
+                    component = GetComponent(id, subgroep as Groep);
+                    if (component is not null)
+                        return component;
                 }
             }
 
@@ -108,6 +84,42 @@ namespace GrafischeEditor_DP
             return null;
         }
 
+        public int? SelectedGroupId()
+        {
+            foreach (var groep in Groepen())
+            {
+                if (groep.Geselecteerd)
+                    return groep.Id;
+            }
+
+            int? id = null;
+
+            foreach (var groep in Groepen())
+            {
+                 id = SelectedSubgroupIdRecursive(groep);
+            }
+
+            return id;
+        }
+
+        private int? SelectedSubgroupIdRecursive(Groep groep)
+        {
+            foreach (var subGroep in groep.Groepen)
+            {
+                if (subGroep.Geselecteerd)
+                    return subGroep.Id;
+            }
+
+            int? id = null;
+
+            foreach (var subGroep in groep.Groepen)
+            {
+                id = SelectedSubgroupIdRecursive(subGroep);
+            }
+
+            return id;
+        }
+
         // maak nieuw figuur object aan en voeg toe aan de list
         public int NieuwFiguur(Rectangle rectangle, FiguurType soortFiguur, int? parentGroupId)
         {
@@ -134,6 +146,12 @@ namespace GrafischeEditor_DP
             }
 
             return newId;
+        }
+
+        public Groep GetGroep(int groupId)
+        {
+            var component = GetComponent(groupId);
+            return component as Groep;
         }
 
         private int GetNewId()
@@ -206,6 +224,12 @@ namespace GrafischeEditor_DP
             if(component is not null)
                 // pas boolean waarde aan in object door bitwise X-OR met true
                 component.Geselecteerd ^= true;
+        }
+
+        public Figuur GetFigure(int id)
+        {
+            var component = GetComponent(id);
+            return component as Figuur;
         }
 
         // verwijder alle figuren uit de lijst
@@ -316,6 +340,37 @@ namespace GrafischeEditor_DP
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Groep)
                 .Select(c => c as Groep);
+        }
+
+        public void ClearSelection()
+        {
+            foreach (var component in _componenten)
+            {
+                component.Geselecteerd = false;
+                if (component is Groep groep)
+                    ClearSelectionInGroup(groep);
+            }
+        }
+
+        private void ClearSelectionInGroup(Groep groep)
+        {
+            foreach (var component in groep.Children)
+            {
+                component.Geselecteerd = false;
+                if (component is Groep subGroep)
+                    ClearSelectionInGroup(subGroep);
+            }
+        }
+
+        public void SelectGroupRecursive(Groep groep)
+        {
+            foreach (var component in groep.Children)
+            {
+                component.Geselecteerd = true;
+                if (component is Groep subGroep)
+                    SelectGroupRecursive(subGroep);
+            }
+
         }
     }
 }

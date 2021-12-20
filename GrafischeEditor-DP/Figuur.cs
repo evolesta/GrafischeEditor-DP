@@ -51,13 +51,9 @@ namespace GrafischeEditor_DP
         public bool Geselecteerd { get; set; }
         public List<IComponent> Children = new();
 
-        public IEnumerable<Figuur> Figuren =>
-            Children.Where(c => c.ComponentType == ComponentType.Figuur)
-                .Select(c => c as Figuur);
+        public IEnumerable<Figuur> Figuren => Children.OfType<Figuur>();
 
-        public IEnumerable<Groep> Groepen =>
-            Children.Where(c => c.ComponentType == ComponentType.Groep)
-                .Select(c => c as Groep);
+        public IEnumerable<Groep> Groepen => Children.OfType<Groep>();
 
         public void NieuwComponent(IComponent groep)
         {

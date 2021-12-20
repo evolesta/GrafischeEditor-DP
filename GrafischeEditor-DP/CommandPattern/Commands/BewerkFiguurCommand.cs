@@ -19,7 +19,8 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Execute()
         {
-            oudePositie = _controller.GetFigure(_id).Positie; // verkrijg huidige figuur voor undo
+            var  figuur = _controller.GetComponent(_id) as Figuur;
+                oudePositie = figuur.Positie; // verkrijg huidige figuur voor undo
             _controller.WijzigFiguur(_rectangle, _id); // plaats nieuwe rectangle
         }
 
