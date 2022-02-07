@@ -152,7 +152,7 @@ namespace GrafischeEditor_DP
                     if (_modifyingFigureId >= 0)
                     {
                         if (_mouseDragEndPosition == _mouseDragStartPosition)
-                            _controller.WijzigSelectie(_modifyingFigureId);
+                            _controller.SelectFigure(_modifyingFigureId);
                         else
                         {
                             if (selectedGroupId.HasValue)
@@ -524,7 +524,7 @@ namespace GrafischeEditor_DP
                     AddChildNodesRecursive(subNode, subGroep, treeView);
 
                 node.Nodes.Add(subNode);
-                if (component.Geselecteerd)
+                if (!groep.Geselecteerd && component.Geselecteerd)
                     treeView.SelectedNode = subNode;
             }
         }

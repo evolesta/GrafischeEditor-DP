@@ -38,7 +38,9 @@ namespace GrafischeEditor_DP
         public IComponent GetComponent(int id, Groep groep)
         {
             var component = groep.Children.FirstOrDefault(f => f.Id == id);
-            if (component is null)
+            if (component is not null)
+                return component;
+            else
             {
                 var groepen = groep.Children.Where(g => g.ComponentType == ComponentType.Groep);
                 foreach (var subgroep in groepen)
@@ -216,14 +218,13 @@ namespace GrafischeEditor_DP
             return groep.Groepen.Any(subGroup => RemoveComponentFromGroupRecursive(subGroup, id));
         }
 
-        // wijzig de selectie van een figuur
-        public void WijzigSelectie(int id)
+        public void SelectFigure(int id)
         {
-            var component = GetFigure(id) as IComponent;
-            component ??= GetGroep(id);
-            if(component is not null)
-                // pas boolean waarde aan in object door bitwise X-OR met true
-                component.Geselecteerd ^= true;
+            if (GetFigure(id) is { } figure)
+            {
+                ClearSelection();
+                figure.Geselecteerd = true;
+            }
         }
 
         public Figuur GetFigure(int id)
@@ -321,19 +322,24 @@ namespace GrafischeEditor_DP
             var figures = Figuren();
             foreach (var groep in Groepen())
             {
-                AddFiguresRecursive(figures, groep);
+                figures = AddFiguresRecursive(figures, groep);
             }
 
             return figures;
         }
 
-        private static void AddFiguresRecursive(IEnumerable<Figuur> figures, Groep groep)
+        private static IEnumerable<Figuur> AddFiguresRecursive(IEnumerable<Figuur> figures, Groep groep)
         {
-            figures.Concat(groep.Children.Where(c => c.ComponentType == ComponentType.Figuur).Select(c => c as Figuur));
-            foreach (var component in groep.Children.Where(c => c.ComponentType == ComponentType.Groep))
-            {
-                AddFiguresRecursive(figures, component as Groep);
-            }
+            var childFigures = groep.Children
+                .Where(c => c.ComponentType == ComponentType.Figuur)
+                .Select(c => c as Figuur);
+
+            figures = figures.Union(childFigures);
+
+            return groep.Children
+                .Where(c => c.ComponentType == ComponentType.Groep)
+                .Aggregate(figures, (current, component) => 
+                    AddFiguresRecursive(current, component as Groep));
         }
 
         public IEnumerable<Groep> Groepen()
