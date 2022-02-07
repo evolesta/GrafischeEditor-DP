@@ -255,8 +255,6 @@ namespace GrafischeEditor_DP
             var newId = GetNewId();
             var groep = new Groep {Naam = "groep " + newId, Id = newId};
             groep.Children = new List<IComponent>();
-            groep.Children.AddRange(Figuren().Where(f => f.Geselecteerd));
-            RemoveAllSelectedFigures();
 
             if (parentGroupId is null)
             {
@@ -275,55 +273,31 @@ namespace GrafischeEditor_DP
         {
             _componenten.Add(group);
         }
-
-        private void RemoveAllSelectedFigures()
-        {
-            _componenten = _componenten.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
-            foreach (var groep in Groepen())
-            {
-                RemoveSelectedFiguresFromGroupRecursive(groep);
-            }
-        }
-
-        private void RemoveSelectedFiguresFromGroupRecursive(Groep groep)
-        {
-            groep.Children = groep.Children.Where(c => c.ComponentType == ComponentType.Groep || !c.Geselecteerd).ToList();
-            foreach (var subGroep in groep.Groepen) 
-                RemoveSelectedFiguresFromGroupRecursive(subGroep);
-        }
-
-        private IEnumerable<Figuur> GetAllSelectedFigures()
-        {
-            var figuren = new List<Figuur>();
-            figuren.AddRange(Figuren().Where(f => f.Geselecteerd));
-            foreach (var groep in Groepen()) 
-                figuren.AddRange(GeselecteerdeFigurenInGroepRecursive(groep));
-
-            return figuren;
-        }
-
-        private IEnumerable<Figuur> GeselecteerdeFigurenInGroepRecursive(Groep groep)
-        {
-            var figuren = groep.Figuren.Where(f => f.Geselecteerd).ToList();
-            foreach (var subgroep in groep.Groepen) 
-                figuren.AddRange(GeselecteerdeFigurenInGroepRecursive(subgroep));
-
-            return figuren;
-        }
-
+        
         public IEnumerable<Figuur> Figuren()
         {
             return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
                 .Select(c => c as Figuur);
         }
 
-        public IEnumerable<Figuur> AllFiguresFlattened()
+        public IEnumerable<Figuur> AllFiguresFlattened(int? groupId = null)
         {
-            var figures = Figuren();
-            foreach (var groep in Groepen())
+            IEnumerable<Figuur> figures = new List<Figuur>();
+
+            if (groupId is null)
             {
-                figures = AddFiguresRecursive(figures, groep);
+                figures = Figuren();
+                foreach (var groep in Groepen())
+                {
+                    figures = AddFiguresRecursive(figures, groep);
+                }
             }
+            else
+            {
+                var group = GetGroep(groupId.Value);
+                figures = AddFiguresRecursive(figures, group);
+            }
+
 
             return figures;
         }

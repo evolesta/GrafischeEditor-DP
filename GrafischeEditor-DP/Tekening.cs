@@ -173,10 +173,10 @@ namespace GrafischeEditor_DP
                         if (selectedGroupId.HasValue)
                         {
                             //als geheel resizen
-
+                            _invoker.SetCommand(new ResizeGroupCommand(selectedGroupId.Value, _controller, _mouseDragEndPosition));
                         }
-
-                        _invoker.SetCommand(new BewerkFiguurCommand(_controller, ResizeRectangle(_modifyingRectangle), _modifyingFigureId));
+                        else
+                            _invoker.SetCommand(new BewerkFiguurCommand(_controller, ResizeRectangle(_modifyingRectangle), _modifyingFigureId));
                     }
                     break;
                 case TekenModus.Rectangle:
