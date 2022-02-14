@@ -189,7 +189,7 @@ namespace GrafischeEditor_DP
         // wijzig figuur object in de lijst voor nieuwe positie/grootte
         public void WijzigFiguur(Rectangle rectangle, int id)
         {
-            var figuur = Figuren().FirstOrDefault(f => f.Id == id);
+            var figuur = GetFigure(id);
             if(figuur is not null)
                 figuur.Positie = rectangle; // wijzig rectangle x-y en grootte
         }

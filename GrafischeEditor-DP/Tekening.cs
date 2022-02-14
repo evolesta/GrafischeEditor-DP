@@ -168,14 +168,13 @@ namespace GrafischeEditor_DP
                     }
                     break;
                 case TekenModus.Resize:
-                    if (_modifyingFigureId >= 0 && _mouseDragEndPosition != _mouseDragStartPosition)
+                    if (_mouseDragEndPosition != _mouseDragStartPosition)
                     {
                         if (selectedGroupId.HasValue)
                         {
-                            //als geheel resizen
                             _invoker.SetCommand(new ResizeGroupCommand(selectedGroupId.Value, _controller, _mouseDragEndPosition));
                         }
-                        else
+                        else if (_modifyingFigureId >= 0)
                             _invoker.SetCommand(new BewerkFiguurCommand(_controller, ResizeRectangle(_modifyingRectangle), _modifyingFigureId));
                     }
                     break;

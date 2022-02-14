@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GrafischeEditor_DP.CommandPattern.Commands
 {
@@ -19,7 +16,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
         public ResizeGroupCommand(int groupId, Controller controller, Point newPosition)
         {
             var group = controller.GetGroep(groupId);
-            _original = JsonSerializer.Serialize(group);
+            _original = JsonConvert.SerializeObject(group, new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Auto});
             _parentGroupId = controller.FindParentGroep(groupId)?.Id;
             _groupId = groupId;
             _controller = controller;
@@ -28,30 +25,48 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Execute()
         {
-            var figures = _controller.AllFiguresFlattened(_groupId);
+            var figures = _controller.AllFiguresFlattened(_groupId).ToArray();
 
-            var x = figures.Min(f => f.Positie.X);
-            var y = figures.Min(f => f.Positie.Y);
+            var groupX = figures.Min(f => f.Positie.X);
+            var groupY = figures.Min(f => f.Positie.Y);
 
-            var oldWidth = figures.Max(f => f.Positie.X) - x;
-            var oldHeight = figures.Max(f => f.Positie.Y) - y;
-
-            var newWidth = _newPosition.X - x;
-            var newHeight = _newPosition.Y - y;
-
-            var oldRectangle = new Rectangle(x, y, oldWidth, oldHeight);
-            var newRectangle = new Rectangle(x, y, newWidth, newHeight);
+            var oldGroupWidth = figures.Max(f => f.Positie.X) - groupX;
+            var newGroupWidth = _newPosition.X - groupX;
+            var ratio = (float)newGroupWidth / oldGroupWidth;
 
             foreach (var figure in figures)
             {
-                //TODO
-                throw new NotImplementedException();
+                var originalRelativeX = figure.Positie.X - groupX;
+                var originalRelativeY = figure.Positie.Y - groupY;
+
+                var newRelativeX = (int)Math.Floor(originalRelativeX * ratio);
+                var newRelativeY = (int)Math.Floor(originalRelativeY * ratio);
+
+                var newX = groupX + newRelativeX;
+                var newY = groupY + newRelativeY;
+
+                var newWidth = (int)Math.Floor(figure.Positie.Width * ratio);
+                var newHeight = (int)Math.Floor(figure.Positie.Height * ratio);
+
+                figure.Positie = new Rectangle(newX, newY, newWidth, newHeight);
             }
         }
 
         public void Undo()
         {
-            var group = JsonSerializer.Deserialize<Groep>(_original);
+            var group = JsonConvert.DeserializeObject<Groep>(_original, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+            if (_parentGroupId.HasValue)
+            {
+                var parent = _controller.GetGroep(_parentGroupId.Value);
+                parent.Children.Remove(parent.Groepen.First(g => g.Id == _groupId));
+                parent.Children.Add(group);
+            }
+            else
+            {
+                _controller.RemoveComponent(_groupId);
+                _controller.AddGroup(group);
+            }
         }
     }
 }

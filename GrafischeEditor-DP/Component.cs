@@ -48,21 +48,13 @@ namespace GrafischeEditor_DP
         public string Naam { get; set; }
         public ComponentType ComponentType => ComponentType.Groep;
         public int Id { get; set; }
+        
         public bool Geselecteerd { get; set; }
         public List<IComponent> Children = new();
 
         public IEnumerable<Figuur> Figuren => Children.OfType<Figuur>();
 
         public IEnumerable<Groep> Groepen => Children.OfType<Groep>();
-
-        public void NieuwComponent(IComponent groep)
-        {
-            Children.Add(groep);
-        }
-
-        public void VerwijderComponent(int index)
-        {
-            Children.RemoveAt(index);
-        }
+        
     }
 }
