@@ -11,15 +11,15 @@ namespace GrafischeEditor_DP
     public class Controller
     {
         // Variabelen declareren
-        private IList<IComponent> _componenten = new List<IComponent>();
+        private Groep _hoofdGroep = new Groep();
 
         // Geeft de actuele lijst met figuren terug
-        public IEnumerable<IComponent> GetComponents() { return _componenten; }
+        public IEnumerable<IComponent> GetComponents() { return _hoofdGroep.Children; }
 
         // Geeft een enkel figuur uit de lijst terug
         public IComponent GetComponent(int id)
         {
-            var component = _componenten.FirstOrDefault(f => f.Id == id);
+            var component = _hoofdGroep.Children.FirstOrDefault(f => f.Id == id);
             if (component is not null) 
                 return component;
 
@@ -60,7 +60,7 @@ namespace GrafischeEditor_DP
             IEnumerable<Groep> groepen;
             if (ancestor is null)
             {
-                child = _componenten.FirstOrDefault(c => c.Id == childId);
+                child = _hoofdGroep.Children.FirstOrDefault(c => c.Id == childId);
                 if (child is not null)
                     return null;
 
@@ -139,7 +139,7 @@ namespace GrafischeEditor_DP
 
             if (parentGroupId is null)
             {
-                _componenten.Add(figuur);
+                _hoofdGroep.Children.Add(figuur);
             }
             else
             {
@@ -158,12 +158,12 @@ namespace GrafischeEditor_DP
 
         private int GetNewId()
         {
-            if (_componenten.Count == 0)
+            if (_hoofdGroep.Children.Count == 0)
                 return 1;
 
             //get all used Ids:
             var ids = new List<int>();
-            foreach (var component in _componenten)
+            foreach (var component in _hoofdGroep.Children)
                 IetsMetIds(ids, component);
 
             return ids.Max() + 1;
@@ -186,19 +186,11 @@ namespace GrafischeEditor_DP
             return ids;
         }
 
-        // wijzig figuur object in de lijst voor nieuwe positie/grootte
-        public void WijzigFiguur(Rectangle rectangle, int id)
-        {
-            var figuur = GetFigure(id);
-            if(figuur is not null)
-                figuur.Positie = rectangle; // wijzig rectangle x-y en grootte
-        }
-
         public void RemoveComponent(int id)
         {
-            var component = _componenten.FirstOrDefault(f => f.Id == id);
+            var component = _hoofdGroep.Children.FirstOrDefault(f => f.Id == id);
             if(component is not null)
-                _componenten.Remove(component);
+                _hoofdGroep.Children.Remove(component);
             else
                 foreach (var groep in Groepen())
                     // If we find the component, no need to proceed to remaining groups, so return:
@@ -236,18 +228,18 @@ namespace GrafischeEditor_DP
         // verwijder alle figuren uit de lijst
         public void ResetComponents()
         {
-            _componenten.Clear();
+            _hoofdGroep.Children.Clear();
         }
 
         public void OpenBestand(string Bestandspad)
         {
             ResetComponents(); // leeg lijst met figuren
-            _componenten = BestandIo.Open(Bestandspad); // lees XML bestand en plaats figuren in list
+            _hoofdGroep.Children = BestandIo.Open(Bestandspad); // lees XML bestand en plaats figuren in list
         }
 
         public void OpslaanBestand(string Bestandspad)
         {
-            BestandIo.Opslaan(Bestandspad, _componenten); // sla huidige list op naar een XML bestand
+            BestandIo.Opslaan(Bestandspad, _hoofdGroep.Children); // sla huidige list op naar een XML bestand
         }
 
         public int NieuweGroep(int? parentGroupId = null)
@@ -258,7 +250,7 @@ namespace GrafischeEditor_DP
 
             if (parentGroupId is null)
             {
-                _componenten.Add(groep);
+                _hoofdGroep.Children.Add(groep);
             }
             else
             {
@@ -271,12 +263,12 @@ namespace GrafischeEditor_DP
 
         public void AddGroup(Groep group)
         {
-            _componenten.Add(group);
+            _hoofdGroep.Children.Add(group);
         }
         
         public IEnumerable<Figuur> Figuren()
         {
-            return _componenten.Where(c => c.ComponentType == ComponentType.Figuur)
+            return _hoofdGroep.Children.Where(c => c.ComponentType == ComponentType.Figuur)
                 .Select(c => c as Figuur);
         }
 
@@ -318,13 +310,13 @@ namespace GrafischeEditor_DP
 
         public IEnumerable<Groep> Groepen()
         {
-            return _componenten.Where(c => c.ComponentType == ComponentType.Groep)
+            return _hoofdGroep.Children.Where(c => c.ComponentType == ComponentType.Groep)
                 .Select(c => c as Groep);
         }
 
         public void ClearSelection()
         {
-            foreach (var component in _componenten)
+            foreach (var component in _hoofdGroep.Children)
             {
                 component.Geselecteerd = false;
                 if (component is Groep groep)

@@ -1,32 +1,33 @@
-﻿using System.Drawing;
+﻿using GrafischeEditor_DP.VisitorPattern;
+using System.Drawing;
 
 namespace GrafischeEditor_DP.CommandPattern.Commands
 {
     class BewerkFiguurCommand : ICommand
     {
-        private Controller _controller;
         private Rectangle _rectangle;
         private Rectangle oudePositie;
-        private int _id;
+        private Figuur _figuur;
         
         // constructor
         public BewerkFiguurCommand(Controller controller, Rectangle rectangle, int id)
         {
-            this._controller = controller;
             this._rectangle = rectangle;
-            this._id = id;
+            this._figuur = controller.GetComponent(id) as Figuur;
         }
 
         public void Execute()
         {
-            var  figuur = _controller.GetComponent(_id) as Figuur;
-                oudePositie = figuur.Positie; // verkrijg huidige figuur voor undo
-            _controller.WijzigFiguur(_rectangle, _id); // plaats nieuwe rectangle
+            oudePositie = _figuur.Positie; // verkrijg huidige figuur voor undo
+
+            var figuurVisitor = new MoveVisitor(_rectangle);
+            _figuur.Accept(figuurVisitor);
         }
 
         public void Undo()
         {
-            _controller.WijzigFiguur(oudePositie, _id); // herstel vorige rectangle
+            var figuurVisitor = new MoveVisitor(oudePositie);
+            _figuur.Accept(figuurVisitor);
         }
     }
 }

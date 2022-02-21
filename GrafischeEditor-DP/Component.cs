@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GrafischeEditor_DP.VisitorPattern;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -10,6 +11,7 @@ namespace GrafischeEditor_DP
         public ComponentType ComponentType { get; }
         public int Id { get; set; }
         public bool Geselecteerd { get; set; }
+        void Accept(IVisitor visitor);
     }
 
     public enum ComponentType
@@ -35,6 +37,11 @@ namespace GrafischeEditor_DP
         public Rectangle Positie { get => positie; set => positie = value; }
         public bool Geselecteerd { get => geselecteerd; set => geselecteerd = value; }
         public FiguurType Type { get; set; }
+
+        public void Accept(IVisitor visitor)
+        {
+            visitor.VisitFigure(this);
+        }
     }
 
     public enum FiguurType
@@ -55,6 +62,10 @@ namespace GrafischeEditor_DP
         public IEnumerable<Figuur> Figuren => Children.OfType<Figuur>();
 
         public IEnumerable<Groep> Groepen => Children.OfType<Groep>();
-        
+
+        public void Accept(IVisitor visitor)
+        {
+            visitor.VisitGroup(this);
+        }
     }
 }
