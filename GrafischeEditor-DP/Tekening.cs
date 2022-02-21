@@ -248,7 +248,7 @@ namespace GrafischeEditor_DP
         private void BestandOpslaan_Click(object sender, EventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog(); // nieuw SaveFile dialog object aanmaken
-            dialog.Filter = "XML files (*.xml)|*.xml"; // bestandstype definieren
+            dialog.Filter = "JSON files (*.json)|*.json"; // bestandstype definieren
             
             if (dialog.ShowDialog() == DialogResult.OK) // dialog openen voor opslaglocatie
             {
@@ -262,7 +262,7 @@ namespace GrafischeEditor_DP
             CheckForUnsavedChanges();
 
             OpenFileDialog dialog = new OpenFileDialog(); // nieuw openFile dialog object
-            dialog.Filter = "XML files (*.xml)|*.xml";
+            dialog.Filter = "JSON files (*.json)|*.json";
 
             // als dialog een succesvol pad heeft bestand daadwerkelijk openen
             if (dialog.ShowDialog() == DialogResult.OK)
