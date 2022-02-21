@@ -1,35 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Xml.Serialization;
+using System;
+using Newtonsoft.Json;
 
-namespace GrafischeEditor_DP
+namespace GrafischeEditor_DP.Bestand
 {
     /// <summary>
     /// 'Receiver' class Bestand voor File I/O
     /// </summary>
-    class Bestand
+    public static class BestandIo
     {
         // leest het xml bestand uit en deserialized de content terug naar een list van objecten
-        public List<Figuur> Open(string Bestandspad)
+        public static List<IComponent> Open(string Bestandspad)
         {
-            FileStream fileStream = new FileStream(Bestandspad, FileMode.Open);
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Figuur>));
-            List<Figuur> figuren = (List<Figuur>)serializer.Deserialize(fileStream);
-            fileStream.Close(); // sluit geopend bestand
-            return figuren; // geeft lijst terug
+            var json = File.ReadAllText(Bestandspad);
+            var components = JsonConvert.DeserializeObject<List<IComponent>>(json, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            return components;
         }
 
         // serialized de list van objecten naar een XML bestand op schijf
-        public void Opslaan(string Bestandspad, List<Figuur> figuren)
+        public static void Opslaan(string Bestandspad, IList<IComponent> componenten)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Figuur>));
-            FileStream filestream = new FileStream(Bestandspad, FileMode.Create);
-            serializer.Serialize(filestream, figuren);
-            filestream.Close();
+            var fileStream = File.CreateText(Bestandspad);
+            var json = JsonConvert.SerializeObject(componenten, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            fileStream.Write(json);
+            fileStream.Close();
         }
     }
 }
