@@ -27,17 +27,17 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
         {
             var figures = _controller.AllFiguresFlattened(_groupId).ToArray();
 
-            var groupX = figures.Min(f => f.Positie.X);
-            var groupY = figures.Min(f => f.Positie.Y);
+            var groupX = figures.Min(f => f.Placement.X);
+            var groupY = figures.Min(f => f.Placement.Y);
 
-            var oldGroupWidth = figures.Max(f => f.Positie.X) - groupX;
+            var oldGroupWidth = figures.Max(f => f.Placement.X) - groupX;
             var newGroupWidth = _newPosition.X - groupX;
             var ratio = (float)newGroupWidth / oldGroupWidth;
 
             foreach (var figure in figures)
             {
-                var originalRelativeX = figure.Positie.X - groupX;
-                var originalRelativeY = figure.Positie.Y - groupY;
+                var originalRelativeX = figure.Placement.X - groupX;
+                var originalRelativeY = figure.Placement.Y - groupY;
 
                 var newRelativeX = (int)Math.Floor(originalRelativeX * ratio);
                 var newRelativeY = (int)Math.Floor(originalRelativeY * ratio);
@@ -45,10 +45,10 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
                 var newX = groupX + newRelativeX;
                 var newY = groupY + newRelativeY;
 
-                var newWidth = (int)Math.Floor(figure.Positie.Width * ratio);
-                var newHeight = (int)Math.Floor(figure.Positie.Height * ratio);
+                var newWidth = (int)Math.Floor(figure.Placement.Width * ratio);
+                var newHeight = (int)Math.Floor(figure.Placement.Height * ratio);
 
-                figure.Positie = new Rectangle(newX, newY, newWidth, newHeight);
+                figure.Placement = new Rectangle(newX, newY, newWidth, newHeight);
             }
         }
 

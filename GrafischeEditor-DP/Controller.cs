@@ -90,7 +90,7 @@ namespace GrafischeEditor_DP
         {
             foreach (var groep in Groepen())
             {
-                if (groep.Geselecteerd)
+                if (groep.Selected)
                     return groep.Id;
             }
 
@@ -108,7 +108,7 @@ namespace GrafischeEditor_DP
         {
             foreach (var subGroep in groep.Groepen)
             {
-                if (subGroep.Geselecteerd)
+                if (subGroep.Selected)
                     return subGroep.Id;
             }
 
@@ -131,10 +131,10 @@ namespace GrafischeEditor_DP
             var figuur = new Figuur()
             {
                 Id = newId, 
-                Naam = "figuur " + newId, 
-                Positie = rectangle, 
+                Name = "figuur " + newId, 
+                Placement = rectangle, 
                 Type = soortFiguur, 
-                Geselecteerd = false
+                Selected = false
             };
 
             if (parentGroupId is null)
@@ -215,7 +215,7 @@ namespace GrafischeEditor_DP
             if (GetFigure(id) is { } figure)
             {
                 ClearSelection();
-                figure.Geselecteerd = true;
+                figure.Selected = true;
             }
         }
 
@@ -245,7 +245,7 @@ namespace GrafischeEditor_DP
         public int NieuweGroep(int? parentGroupId = null)
         {
             var newId = GetNewId();
-            var groep = new Groep {Naam = "groep " + newId, Id = newId};
+            var groep = new Groep {Name = "groep " + newId, Id = newId};
             groep.Children = new List<IComponent>();
 
             if (parentGroupId is null)
@@ -318,7 +318,7 @@ namespace GrafischeEditor_DP
         {
             foreach (var component in _hoofdGroep.Children)
             {
-                component.Geselecteerd = false;
+                component.Selected = false;
                 if (component is Groep groep)
                     ClearSelectionInGroup(groep);
             }
@@ -328,7 +328,7 @@ namespace GrafischeEditor_DP
         {
             foreach (var component in groep.Children)
             {
-                component.Geselecteerd = false;
+                component.Selected = false;
                 if (component is Groep subGroep)
                     ClearSelectionInGroup(subGroep);
             }
@@ -338,7 +338,7 @@ namespace GrafischeEditor_DP
         {
             foreach (var component in groep.Children)
             {
-                component.Geselecteerd = true;
+                component.Selected = true;
                 if (component is Groep subGroep)
                     SelectGroupRecursive(subGroep);
             }

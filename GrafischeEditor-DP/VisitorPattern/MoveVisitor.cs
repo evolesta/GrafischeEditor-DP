@@ -1,29 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace GrafischeEditor_DP.VisitorPattern
 {
     public class MoveVisitor : IVisitor
     {
-        private Rectangle _newRectangle;
+        private readonly int _moveX;
+        private readonly int _moveY;
 
-        public MoveVisitor(Rectangle newRectangle)
+        public MoveVisitor(int moveX, int moveY)
         {
-            _newRectangle = newRectangle;
+            _moveX = moveX;
+            _moveY = moveY;
         }
 
         public void VisitFigure(Figuur element)
         {
-            element.Positie = _newRectangle;
+            var newX = element.Placement.X + _moveX;
+            var newY = element.Placement.Y + _moveY;
+            element.Placement = new Rectangle(newX, newY, element.Placement.Width, element.Placement.Height);
         }
 
         public void VisitGroup(Groep element)
         {
-            throw new NotImplementedException();
+            MoveAllFiguresInGroupRecursive(element);
+        }
+
+        private void MoveAllFiguresInGroupRecursive(Groep groep)
+        {
+            foreach (var figuur in groep.Figuren)
+            {
+                figuur.Placement = new Rectangle
+                {
+                    X = figuur.Placement.X + _moveX,
+                    Y = figuur.Placement.Y + _moveY,
+                    Height = figuur.Placement.Height,
+                    Width = figuur.Placement.Width
+                };
+            }
+            foreach (var subGroep in groep.Groepen)
+            {
+                MoveAllFiguresInGroupRecursive(subGroep);
+            }
         }
     }
 }

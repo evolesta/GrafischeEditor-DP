@@ -14,13 +14,13 @@
 
         public void Execute()
         {
-            _previousName = _component.Naam;
-            _component.Naam = _newName;
+            _previousName = _component.Name;
+            _component.Name = _newName;
         }
 
         public void Undo()
         {
-            _component.Naam = _previousName;
+            _component.Name = _previousName;
         }
     }
 }

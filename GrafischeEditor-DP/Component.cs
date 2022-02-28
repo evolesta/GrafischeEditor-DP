@@ -7,10 +7,10 @@ namespace GrafischeEditor_DP
 {
 
     public interface IComponent {
-        public string Naam { get; set; }
+        public string Name { get; set; }
         public ComponentType ComponentType { get; }
         public int Id { get; set; }
-        public bool Geselecteerd { get; set; }
+        public bool Selected { get; set; }
         void Accept(IVisitor visitor);
     }
 
@@ -25,18 +25,13 @@ namespace GrafischeEditor_DP
     /// </summary>
     public class Figuur : IComponent
     {
-        // globale variabelen voor figuur
-        private string naam; // naam van het figuur
-        private Rectangle positie; // x-y as en groote figuur
-        private bool geselecteerd; // of figuur geselecteerd is
-
-        // getters en setters
-        public string Naam { get => naam; set => naam = value; }
+        public string Name { get; set; }
         public ComponentType ComponentType => ComponentType.Figuur;
         public int Id { get; set; }
-        public Rectangle Positie { get => positie; set => positie = value; }
-        public bool Geselecteerd { get => geselecteerd; set => geselecteerd = value; }
+        public Rectangle Placement { get; set; }
+        public bool Selected { get; set; }
         public FiguurType Type { get; set; }
+
 
         public void Accept(IVisitor visitor)
         {
@@ -52,11 +47,11 @@ namespace GrafischeEditor_DP
 
     public class Groep : IComponent
     {
-        public string Naam { get; set; }
+        public string Name { get; set; }
         public ComponentType ComponentType => ComponentType.Groep;
         public int Id { get; set; }
         
-        public bool Geselecteerd { get; set; }
+        public bool Selected { get; set; }
         public List<IComponent> Children = new();
 
         public IEnumerable<Figuur> Figuren => Children.OfType<Figuur>();
