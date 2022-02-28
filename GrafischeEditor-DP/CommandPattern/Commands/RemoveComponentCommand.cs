@@ -24,7 +24,7 @@
         public void Undo()
         {
             if (_component is Figuur figuur)
-                _controller.NieuwFiguur(figuur.Positie, figuur.Type, _parent?.Id); // voeg oude object opnieuw toe aan list
+                _controller.NieuwFiguur(figuur.Placement, figuur.Type, _parent?.Id); // voeg oude object opnieuw toe aan list
             else
                 if(_parent is not null)
                     _parent.Children.Add(_component);

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using GrafischeEditor_DP.VisitorPattern;
 using Newtonsoft.Json;
 
 namespace GrafischeEditor_DP.CommandPattern.Commands
 {
     internal class ResizeGroupCommand : ICommand
     {
-        private string _original;
-        private int? _parentGroupId;
+        private readonly string _original;
+        private readonly int? _parentGroupId;
         private readonly int _groupId;
-        private Controller _controller;
+        private readonly Controller _controller;
         private readonly Point _newPosition;
 
         public ResizeGroupCommand(int groupId, Controller controller, Point newPosition)
@@ -25,31 +26,9 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Execute()
         {
-            var figures = _controller.AllFiguresFlattened(_groupId).ToArray();
-
-            var groupX = figures.Min(f => f.Positie.X);
-            var groupY = figures.Min(f => f.Positie.Y);
-
-            var oldGroupWidth = figures.Max(f => f.Positie.X) - groupX;
-            var newGroupWidth = _newPosition.X - groupX;
-            var ratio = (float)newGroupWidth / oldGroupWidth;
-
-            foreach (var figure in figures)
-            {
-                var originalRelativeX = figure.Positie.X - groupX;
-                var originalRelativeY = figure.Positie.Y - groupY;
-
-                var newRelativeX = (int)Math.Floor(originalRelativeX * ratio);
-                var newRelativeY = (int)Math.Floor(originalRelativeY * ratio);
-
-                var newX = groupX + newRelativeX;
-                var newY = groupY + newRelativeY;
-
-                var newWidth = (int)Math.Floor(figure.Positie.Width * ratio);
-                var newHeight = (int)Math.Floor(figure.Positie.Height * ratio);
-
-                figure.Positie = new Rectangle(newX, newY, newWidth, newHeight);
-            }
+            var visitor = new ResizeVisitor(_newPosition);
+            var group = _controller.GetGroep(_groupId);
+            group.Accept(visitor);
         }
 
         public void Undo()

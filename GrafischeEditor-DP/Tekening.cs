@@ -83,31 +83,31 @@ namespace GrafischeEditor_DP
             
             _mouseDragStartPosition = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = _controller.AllFiguresFlattened().LastOrDefault(f => f.Positie.Contains(e.Location));
+            var huidigFiguur = _controller.GetAllFiguresFlattened().LastOrDefault(f => f.Placement.Contains(e.Location));
             if(huidigFiguur is not null) 
                 _modifyingFigureId = huidigFiguur.Id;
 
             switch (_currentMode)
             {
                 case TekenModus.Select:
-                    foreach (var figuur in _controller.AllFiguresFlattened()) // doorloop alle figuren
+                    foreach (var figuur in _controller.GetAllFiguresFlattened()) // doorloop alle figuren
                     {
-                        if (figuur.Positie.Contains(_mouseDragStartPosition))
+                        if (figuur.Placement.Contains(_mouseDragStartPosition))
                         {
                             _isMoving = true; // zet boolean op beweegmodus
-                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Positie; // verkrijg rectangle van object
+                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Placement; // verkrijg rectangle van object
                             _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
                 case TekenModus.Resize:
-                    foreach (var figuur in _controller.AllFiguresFlattened()) // doorloop alle figuren
+                    foreach (var figuur in _controller.GetAllFiguresFlattened()) // doorloop alle figuren
                     {
                         // controleren of figuur zich in muispositie bevindt en de state default is
-                        if (figuur.Positie.Contains(_mouseDragStartPosition))
+                        if (figuur.Placement.Contains(_mouseDragStartPosition))
                         {
                             _isResizing = true; // zet boolean actief resizing
-                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Positie; // verkrijg rectangle van object
+                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Placement; // verkrijg rectangle van object
                             _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
@@ -159,10 +159,15 @@ namespace GrafischeEditor_DP
                             {
                                 var moveX = _mouseDragEndPosition.X - _mouseDragStartPosition.X;
                                 var moveY = _mouseDragEndPosition.Y - _mouseDragStartPosition.Y;
-                                _invoker.SetCommand(new BewerkGroepCommand(_controller, selectedGroupId.Value, moveX, moveY));
+                                _invoker.SetCommand(new MoveGroupCommand(_controller, selectedGroupId.Value, moveX, moveY));
                             }
                             else
-                                _invoker.SetCommand(new BewerkFiguurCommand(_controller, MoveRectangle(_modifyingRectangle), _modifyingFigureId));
+                            {
+                                var moveRight = _mouseDragEndPosition.X - _mouseDragStartPosition.X;
+                                var moveDown = _mouseDragEndPosition.Y - _mouseDragStartPosition.Y;
+                                _invoker.SetCommand(new MoveFigureCommand(_controller, moveRight, moveDown, _modifyingFigureId));
+                            }
+
 
                         }
                     }
@@ -175,7 +180,10 @@ namespace GrafischeEditor_DP
                             _invoker.SetCommand(new ResizeGroupCommand(selectedGroupId.Value, _controller, _mouseDragEndPosition));
                         }
                         else if (_modifyingFigureId >= 0)
-                            _invoker.SetCommand(new BewerkFiguurCommand(_controller, ResizeRectangle(_modifyingRectangle), _modifyingFigureId));
+                        {
+                            var figure = _controller.GetFigure(_modifyingFigureId);
+                            _invoker.SetCommand(new ResizeFigureCommand(figure, _mouseDragEndPosition));
+                        }
                     }
                     break;
                 case TekenModus.Rectangle:
@@ -208,7 +216,7 @@ namespace GrafischeEditor_DP
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
             foreach (var figuur in _controller.Figuren())
             {
-                Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
+                Draw(figuur.Type, figuur.Placement, figuur.Selected, e);
             }
 
             foreach (var groep in _controller.Groepen())
@@ -331,7 +339,7 @@ namespace GrafischeEditor_DP
                 }
                 case MouseButtons.Left:
                     _controller.ClearSelection();
-                    _currentComponent.Geselecteerd = true;
+                    _currentComponent.Selected = true;
                     if(_currentComponent is Groep groep)
                         _controller.SelectGroupRecursive(groep);
                     Refresh();
@@ -403,7 +411,7 @@ namespace GrafischeEditor_DP
 
         private void Draw(Figuur figuur, PaintEventArgs e)
         {
-            Draw(figuur.Type, figuur.Positie, figuur.Geselecteerd, e);
+            Draw(figuur.Type, figuur.Placement, figuur.Selected, e);
         }
 
         // Methode voor het genereren van een pen om te tekenen
@@ -495,13 +503,13 @@ namespace GrafischeEditor_DP
             foreach (var component in _controller.GetComponents())
             {
                 // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
-                var newNode = new TreeNode { Text = component.Naam, Tag = component };
+                var newNode = new TreeNode { Text = component.Name, Tag = component };
 
                 if (component is Groep groep)
                     AddChildNodesRecursive(newNode, groep, treeView);
 
                 treeView.Nodes.Add(newNode);
-                if (component.Geselecteerd)
+                if (component.Selected)
                     treeView.SelectedNode = newNode;
             }
 
@@ -517,13 +525,13 @@ namespace GrafischeEditor_DP
             foreach (var component in groep.Children)
             {
                 // voeg nieuwe node toe voor een groep of figuur. Bewaar het object in de node voor later gebruik 
-                var subNode = new TreeNode { Text = component.Naam, Tag = component };
+                var subNode = new TreeNode { Text = component.Name, Tag = component };
 
                 if (component is Groep subGroep)
                     AddChildNodesRecursive(subNode, subGroep, treeView);
 
                 node.Nodes.Add(subNode);
-                if (!groep.Geselecteerd && component.Geselecteerd)
+                if (!groep.Selected && component.Selected)
                     treeView.SelectedNode = subNode;
             }
         }
