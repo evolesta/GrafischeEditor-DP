@@ -13,6 +13,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
         public ResizeFigureCommand(Figuur figure, Point newPosition)
         {
             _figure = figure;
+            _oldPosition = new Point(figure.Placement.Width, figure.Placement.Height);
             _newPosition = newPosition;
         }
 
@@ -24,7 +25,8 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Undo()
         {
-            throw new NotImplementedException();
+            var visitor = new ResizeVisitor(_oldPosition);
+            _figure.Accept(visitor);
         }
     }
 }

@@ -1,19 +1,24 @@
-﻿namespace GrafischeEditor_DP.CommandPattern.Commands
+﻿using GrafischeEditor_DP.VisitorPattern;
+
+namespace GrafischeEditor_DP.CommandPattern.Commands    
 {
     class OpenBestandCommand : ICommand
     {
-        private Controller _controller;
-        private string _bestandspad;
+        private readonly Groep _groep;
+        private readonly Controller _controller;
+        private readonly string _bestandspad;
 
         public OpenBestandCommand(Controller controller, string bestandspad)
         {
-            this._controller = controller;
-            this._bestandspad = bestandspad;
+            _groep = controller.HoofdGroep;
+            _controller = controller;
+            _bestandspad = bestandspad;
         }
 
         public void Execute()
         {
-            _controller.OpenBestand(_bestandspad);
+            var visitor = new OpenVisitor(_bestandspad, _controller);
+            _groep.Accept(visitor);
         }
 
         public void Undo() { } // geen undo voor openen bestand

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GrafischeEditor_DP.Bestand;
 
 namespace GrafischeEditor_DP
 {
@@ -13,6 +12,8 @@ namespace GrafischeEditor_DP
     {
         // Variabelen declareren
         private Groep _hoofdGroep = new Groep();
+
+        public Groep HoofdGroep { get => _hoofdGroep; set => _hoofdGroep = value; }
 
         // Geeft de actuele lijst met figuren terug
         public IEnumerable<IComponent> GetComponents() { return _hoofdGroep.Children; }
@@ -233,17 +234,6 @@ namespace GrafischeEditor_DP
         public void ResetComponents()
         {
             _hoofdGroep.Children.Clear();
-        }
-
-        public void OpenBestand(string Bestandspad)
-        {
-            ResetComponents(); // leeg lijst met figuren
-            _hoofdGroep.Children = BestandIo.Open(Bestandspad); // lees XML bestand en plaats figuren in list
-        }
-
-        public void OpslaanBestand(string Bestandspad)
-        {
-            BestandIo.Opslaan(Bestandspad, _hoofdGroep.Children); // sla huidige list op naar een XML bestand
         }
 
         public int NieuweGroep(int? parentGroupId = null)
