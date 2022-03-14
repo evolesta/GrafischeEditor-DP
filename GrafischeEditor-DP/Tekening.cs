@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using GrafischeEditor_DP.CommandPattern;
 using GrafischeEditor_DP.CommandPattern.Commands;
+using GrafischeEditor_DP.VisitorPattern;
+using Newtonsoft.Json;
 
 namespace GrafischeEditor_DP
 {
@@ -260,8 +263,8 @@ namespace GrafischeEditor_DP
             
             if (dialog.ShowDialog() == DialogResult.OK) // dialog openen voor opslaglocatie
             {
-                _invoker.SetCommand(new OpslaanBestandCommand(_controller, dialog.FileName));
-                _invoker.Execute();
+                var visitor = new OpslaanVisitor(dialog.FileName);
+                _controller.HoofdGroep.Accept(visitor);
             }
         }
 
@@ -275,8 +278,9 @@ namespace GrafischeEditor_DP
             // als dialog een succesvol pad heeft bestand daadwerkelijk openen
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                _invoker.SetCommand(new OpenBestandCommand(_controller, dialog.FileName));
-                _invoker.Execute();
+                var json = File.ReadAllText(dialog.FileName);
+                var groep = JsonConvert.DeserializeObject<Groep>(json, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+                _controller.HoofdGroep = groep;
             }
 
             Refresh(); // herteken het werkveld
