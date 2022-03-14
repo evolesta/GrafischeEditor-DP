@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using GrafischeEditor_DP.VisitorPattern;
 
 namespace GrafischeEditor_DP.CommandPattern.Commands
@@ -8,12 +7,12 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
     {
         private readonly Figuur _figure;
         private readonly Point _newPosition;
-        private readonly Point _oldPosition;
+        private readonly Rectangle _oldPlacement;
 
         public ResizeFigureCommand(Figuur figure, Point newPosition)
         {
             _figure = figure;
-            _oldPosition = new Point(figure.Placement.Width, figure.Placement.Height);
+            _oldPlacement = figure.Placement;
             _newPosition = newPosition;
         }
 
@@ -25,8 +24,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 
         public void Undo()
         {
-            var visitor = new ResizeVisitor(_oldPosition);
-            _figure.Accept(visitor);
+            _figure.Placement = _oldPlacement;
         }
     }
 }
