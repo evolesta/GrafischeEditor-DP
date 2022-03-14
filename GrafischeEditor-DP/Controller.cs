@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GrafischeEditor_DP.StrategyPattern;
 
 namespace GrafischeEditor_DP
 {
@@ -138,7 +140,12 @@ namespace GrafischeEditor_DP
                 Id = newId, 
                 Name = "figuur " + newId, 
                 Placement = rectangle, 
-                Type = soortFiguur, 
+                Strategy = soortFiguur switch
+                {
+                    FiguurType.Ellipse => Strategies.EllipseStrategy,
+                    FiguurType.Rectangle => Strategies.RectangleStrategy,
+                    _ => throw new ArgumentOutOfRangeException(nameof(soortFiguur), soortFiguur, null)
+                } , 
                 Selected = false
             };
 
