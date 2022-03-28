@@ -14,6 +14,7 @@ namespace GrafischeEditor_DP
         public int Id { get; set; }
         public bool Selected { get; set; }
         void Accept(IVisitor visitor);
+        void Draw(PaintEventArgs e, Rectangle? preview = null);
     }
 
     public enum ComponentType
@@ -74,5 +75,8 @@ namespace GrafischeEditor_DP
 
         public IEnumerable<Figuur> AllFiguresFlattened() =>
             Figuren.Concat(Groepen.SelectMany(g => g.AllFiguresFlattened()));
+
+        // group will not be physical drawed in the drawpanel
+        public void Draw(PaintEventArgs e, Rectangle? preview = null) { }
     }
 }
