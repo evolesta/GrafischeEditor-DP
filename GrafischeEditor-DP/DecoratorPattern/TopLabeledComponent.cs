@@ -20,9 +20,9 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
             Font drawFont = new Font("Arial", 16);
             SolidBrush solidBrush = new SolidBrush(Color.Black);
-            PointF labelPoint = new PointF()
+            PointF labelPoint = new PointF(Placement.X, Placement.Y + 10);
 
-            e.Graphics.DrawString(Text, drawFont, solidBrush, null);
+            e.Graphics.DrawString("Dummy", drawFont, solidBrush, labelPoint);
         }
     }
 }

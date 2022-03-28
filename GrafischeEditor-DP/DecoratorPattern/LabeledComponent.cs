@@ -26,6 +26,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
         public int Id { get => component.Id; set => component.Id = value; }
         public bool Selected { get => component.Selected; set => component.Selected = value; }
+        public Rectangle Placement { get => component.Placement; set => component.Placement = value; }
 
         public void Accept(IVisitor visitor) => component.Accept(visitor);
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GrafischeEditor_DP.DecoratorPattern;
 using GrafischeEditor_DP.StrategyPattern;
 
 namespace GrafischeEditor_DP
@@ -144,14 +145,17 @@ namespace GrafischeEditor_DP
                 Selected = false
             };
 
+            var dummy = new TopLabeledComponent(figuur);
+            dummy.Text = "bliep";
+
             if (parentGroupId is null)
             {
-                _hoofdGroep.Children.Add(figuur);
+                _hoofdGroep.Children.Add(dummy);
             }
             else
             {
                 var parent = GetGroep(parentGroupId.Value);
-                parent.Children.Add(figuur);
+                parent.Children.Add(dummy);
             }
 
             return newId;

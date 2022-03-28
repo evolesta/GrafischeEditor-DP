@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GrafischeEditor_DP.StrategyPattern;
+using System;
 
 namespace GrafischeEditor_DP
 {
@@ -11,6 +12,7 @@ namespace GrafischeEditor_DP
     public interface IComponent {
         public string Name { get; set; }
         public ComponentType ComponentType { get; }
+        public Rectangle Placement { get; set; }
         public int Id { get; set; }
         public bool Selected { get; set; }
         void Accept(IVisitor visitor);
@@ -66,6 +68,19 @@ namespace GrafischeEditor_DP
         public IEnumerable<Figuur> Figuren => Children.OfType<Figuur>();
 
         public IEnumerable<Groep> Groepen => Children.OfType<Groep>();
+
+        public Rectangle Placement { get => GetRectangle(); set => throw new InvalidOperationException(); }
+
+        private Rectangle GetRectangle()
+        {
+            var figures = AllFiguresFlattened().ToArray();
+            var X = figures.Min(f => f.Placement.X);
+            var Y = figures.Min(f => f.Placement.Y);
+            var Width = figures.Max(f => f.Placement.X + f.Placement.Width) - X;
+            var Heigth = figures.Max(f => f.Placement.Y + f.Placement.Height) - Y;
+
+            return new Rectangle(X, Y, Width, Heigth);
+        }
 
         public void Accept(IVisitor visitor)
         {

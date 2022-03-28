@@ -215,7 +215,8 @@ namespace GrafischeEditor_DP
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
             foreach (var figuur in _controller.Figuren())
             {
-                figuur.Draw(e);
+                if(figuur is not null)
+                    figuur.Draw(e);
             }
 
             foreach (var groep in _controller.Groepen())
