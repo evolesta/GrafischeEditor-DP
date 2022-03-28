@@ -14,6 +14,8 @@ namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
+        private static readonly Figuur _preview = new();
+
         private TekenModus _currentMode;
 
         private Point _mouseDragStartPosition; // X and Y
@@ -226,14 +228,16 @@ namespace GrafischeEditor_DP
             // wanneer er nog getekend wordt, teken preview
             if (_isDrawing)
             {
-                Draw(ToFiguurType(_currentMode), GetRectangle(), false, e);
+                _preview.FiguurType = ToFiguurType(_currentMode); 
+                _preview.Placement = GetRectangle();
+                _preview.Draw(e);
             }
 
             if (_isMoving)
-            {
+            {   
                 var figure = _controller.GetFigure(_modifyingFigureId);
                 var preview = MoveRectangle(figure.Placement);
-                figure.Draw(e, preview);
+                figure.Draw(e, preview);    
             }
 
             if (_isResizing)

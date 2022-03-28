@@ -140,12 +140,7 @@ namespace GrafischeEditor_DP
                 Id = newId, 
                 Name = "figuur " + newId, 
                 Placement = rectangle, 
-                Strategy = soortFiguur switch
-                {
-                    FiguurType.Ellipse => Strategies.EllipseStrategy,
-                    FiguurType.Rectangle => Strategies.RectangleStrategy,
-                    _ => throw new ArgumentOutOfRangeException(nameof(soortFiguur), soortFiguur, null)
-                } , 
+                FiguurType = soortFiguur,
                 Selected = false
             };
 
