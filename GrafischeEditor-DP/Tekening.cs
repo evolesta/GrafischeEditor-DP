@@ -14,6 +14,8 @@ namespace GrafischeEditor_DP
 {
     public partial class Tekening : Form
     {
+        private static readonly Figuur _preview = new();
+
         private TekenModus _currentMode;
 
         private Point _mouseDragStartPosition; // X and Y
@@ -24,8 +26,6 @@ namespace GrafischeEditor_DP
         private bool _isResizing; // bool wanneer een bestaand figuur van grootte veranderd wordt
         private bool _isDrawing ;
         private int _modifyingFigureId = -1; // index waarde van aan te passen object bij resizing + moving
-        private Rectangle _modifyingRectangle; // rectangle die verplaatst of vergroot wordt
-        private FiguurType _modifyingFigureType;
 
         private readonly Controller _controller = new(); // controller object
 
@@ -98,8 +98,6 @@ namespace GrafischeEditor_DP
                         if (figuur.Placement.Contains(_mouseDragStartPosition))
                         {
                             _isMoving = true; // zet boolean op beweegmodus
-                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Placement; // verkrijg rectangle van object
-                            _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
@@ -110,8 +108,6 @@ namespace GrafischeEditor_DP
                         if (figuur.Placement.Contains(_mouseDragStartPosition))
                         {
                             _isResizing = true; // zet boolean actief resizing
-                            _modifyingRectangle = _controller.GetFigure(_modifyingFigureId).Placement; // verkrijg rectangle van object
-                            _modifyingFigureType = _controller.GetFigure(_modifyingFigureId).Type; // verkrijg soort figuur
                         }
                     }
                     break;
@@ -219,7 +215,7 @@ namespace GrafischeEditor_DP
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
             foreach (var figuur in _controller.Figuren())
             {
-                Draw(figuur.Type, figuur.Placement, figuur.Selected, e);
+                figuur.Draw(e);
             }
 
             foreach (var groep in _controller.Groepen())
@@ -232,24 +228,30 @@ namespace GrafischeEditor_DP
             // wanneer er nog getekend wordt, teken preview
             if (_isDrawing)
             {
-                Draw(ToFiguurType(_currentMode), GetRectangle(), false, e);
+                _preview.FiguurType = ToFiguurType(_currentMode); 
+                _preview.Placement = GetRectangle();
+                _preview.Draw(e);
             }
 
             if (_isMoving)
-            {
-                Draw(_modifyingFigureType, MoveRectangle(_modifyingRectangle), true, e);
+            {   
+                var figure = _controller.GetFigure(_modifyingFigureId);
+                var preview = MoveRectangle(figure.Placement);
+                figure.Draw(e, preview);    
             }
 
             if (_isResizing)
             {
-                Draw(_modifyingFigureType, ResizeRectangle(_modifyingRectangle), true, e);
+                var figure = _controller.GetFigure(_modifyingFigureId);
+                var preview = ResizeRectangle(figure.Placement);
+                figure.Draw(e, preview);
             }
         }
 
         private void DrawFiguresRecursive(Groep groep, PaintEventArgs e)
         {
             foreach (var figuur in groep.Figuren) 
-                Draw(figuur, e);
+                figuur.Draw(e);
 
             foreach (var subGroep in groep.Groepen) 
                 DrawFiguresRecursive(subGroep, e);
@@ -395,42 +397,6 @@ namespace GrafischeEditor_DP
 
 
         // METHODEN -- //
-        // Methode voor het printen van een figuur op het scherm
-        private void Draw(FiguurType type, Rectangle positie, bool selected, PaintEventArgs e)
-        {
-            Pen pen = GeneratePen(selected); // genereer nieuwe pen
-
-            switch (type)
-            {
-                case FiguurType.Rectangle:
-                    e.Graphics.DrawRectangle(pen, positie);
-                    break;
-                case FiguurType.Ellipse:
-                    e.Graphics.DrawEllipse(pen, positie);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
-            }
-        }
-
-        private void Draw(Figuur figuur, PaintEventArgs e)
-        {
-            Draw(figuur.Type, figuur.Placement, figuur.Selected, e);
-        }
-
-        // Methode voor het genereren van een pen om te tekenen
-        private Pen GeneratePen(bool selectie)
-        {
-            Pen pen = new Pen(Color.Black, 2); // maak nieuwe pen object aan
-
-            // check op boolean waarde voor selectie
-            if (selectie)
-            {
-                pen.DashStyle = DashStyle.Dot;
-            }
-
-            return pen;
-        }
 
         // Bereken de plaatsing van het figuur adhv start & eind x-y posities
         private Rectangle GetRectangle()
