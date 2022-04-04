@@ -31,7 +31,7 @@ namespace GrafischeEditor_DP
             var groepen = Groepen();
             foreach (var groep in groepen)
             {
-                component = GetComponent(id, groep);
+                component = GetComponent(id, groep.InnerComponent() as Groep);
                 if (component is not null)
                     return component;
             }
@@ -61,20 +61,20 @@ namespace GrafischeEditor_DP
 
         public Groep FindParentGroep(int childId, Groep ancestor = null)
         {
-            IComponent child;
+            IComponent topLevelComponent;
             IEnumerable<Groep> groepen;
             if (ancestor is null)
             {
-                child = _hoofdGroep.Children.FirstOrDefault(c => c.Id == childId);
-                if (child is not null)
+                topLevelComponent = _hoofdGroep.Children.FirstOrDefault(c => c.Id == childId);
+                if (topLevelComponent is not null)
                     return null;
 
-                groepen = Groepen();
+                groepen = Groepen().Select(g => g.InnerComponent() as Groep);
             }
             else
             {
-                child = ancestor.Children.FirstOrDefault(c => c.Id == childId);
-                if (child is not null)
+                topLevelComponent = ancestor.Children.FirstOrDefault(c => c.Id == childId);
+                if (topLevelComponent is not null)
                     return ancestor;
 
                 groepen = ancestor.Groepen;
@@ -96,7 +96,9 @@ namespace GrafischeEditor_DP
 
         public int? SelectedGroupId()
         {
-            foreach (var groep in Groepen())
+            var groups = Groepen().Select(g => g.InnerComponent() as Groep);
+
+            foreach (var groep in groups)
             {
                 if (groep.Selected)
                     return groep.Id;
@@ -104,7 +106,7 @@ namespace GrafischeEditor_DP
 
             int? id = null;
 
-            foreach (var groep in Groepen())
+            foreach (var groep in groups)
             {
                  id = SelectedSubgroupIdRecursive(groep);
             }
@@ -203,7 +205,7 @@ namespace GrafischeEditor_DP
             if(component is not null)
                 _hoofdGroep.Children.Remove(component);
             else
-                foreach (var groep in Groepen())
+                foreach (var groep in Groepen().Select(g => g.InnerComponent() as Groep))
                     // If we find the component, no need to proceed to remaining groups, so return:
                     if (RemoveComponentFromGroupRecursive(groep, id))
                         return;
@@ -266,10 +268,9 @@ namespace GrafischeEditor_DP
             _hoofdGroep.Children.Add(group);
         }
 
-        public IEnumerable<Groep> Groepen()
+        public IEnumerable<IComponent> Groepen()
         {
-            return _hoofdGroep.Children.Where(c => c.ComponentType == ComponentType.Groep)
-                .Select(c => c.InnerComponent() as Groep);
+            return _hoofdGroep.Children.Where(c => c.ComponentType == ComponentType.Groep);
         }
 
         public void ClearSelection()

@@ -93,9 +93,13 @@ namespace GrafischeEditor_DP
 
         public IEnumerable<Figuur> AllFiguresFlattened() =>
             Figuren.Concat(Groepen.SelectMany(g => g.AllFiguresFlattened()));
+        
+        public void Draw(PaintEventArgs e, Rectangle? preview = null)
+        {
+            foreach (var component in Children)
+                component.Draw(e, preview);
+        }
 
-        // group will not be physical drawed in the drawpanel
-        public void Draw(PaintEventArgs e, Rectangle? preview = null) { }
         public IComponent InnerComponent() => this;
     }
 }

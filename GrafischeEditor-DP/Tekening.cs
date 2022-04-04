@@ -212,15 +212,10 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in _controller.GetComponents())
+            foreach (var component in _controller.GetComponents())
             {
-                if(figuur is not null)
-                    figuur.Draw(e);
-            }
-
-            foreach (var groep in _controller.Groepen())
-            {
-                DrawFiguresRecursive(groep, e);
+                if(component is not null)
+                    component.Draw(e);
             }
 
             FillTreeview(); // genereer TreeView met figuren
@@ -246,15 +241,6 @@ namespace GrafischeEditor_DP
                 var preview = ResizeRectangle(figure.Placement);
                 figure.Draw(e, preview);
             }
-        }
-
-        private void DrawFiguresRecursive(Groep groep, PaintEventArgs e)
-        {
-            foreach (var figuur in groep.Figuren) 
-                figuur.Draw(e);
-
-            foreach (var subGroep in groep.Groepen) 
-                DrawFiguresRecursive(subGroep, e);
         }
 
 
