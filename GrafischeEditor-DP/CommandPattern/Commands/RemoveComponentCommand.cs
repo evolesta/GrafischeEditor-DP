@@ -29,7 +29,7 @@
                 if(_parent is not null)
                     _parent.Children.Add(_component);
                 else
-                    _controller.AddGroup(_component as Groep);
+                    _controller.AddGroup(_component.InnerComponent() as Groep);
         }
     }
 }

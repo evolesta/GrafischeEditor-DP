@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GrafischeEditor_DP.DecoratorPattern
 {
-    public class LeftLabeledComponent : LabeledComponent
+    public class LeftLabeledComponent<T> : LabeledComponent<T> where T : IComponent
     {
-        public LeftLabeledComponent(IComponent component) : base(component)
+        public LeftLabeledComponent(T component) : base(component)
         {
         }
     }

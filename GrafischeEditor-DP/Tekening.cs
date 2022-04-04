@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -213,7 +212,7 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in _controller.Figuren())
+            foreach (var figuur in _controller.GetComponents())
             {
                 if(figuur is not null)
                     figuur.Draw(e);

@@ -17,6 +17,8 @@ namespace GrafischeEditor_DP
         public bool Selected { get; set; }
         void Accept(IVisitor visitor);
         void Draw(PaintEventArgs e, Rectangle? preview = null);
+
+        public IComponent InnerComponent();
     }
 
     public enum ComponentType
@@ -44,6 +46,7 @@ namespace GrafischeEditor_DP
         }; 
 	
         public void Draw(PaintEventArgs e, Rectangle? preview = null) => Strategy.Draw(e, Selected, preview ?? Placement);
+        public IComponent InnerComponent() => this;
 
         public void Accept(IVisitor visitor)
         {
@@ -93,5 +96,6 @@ namespace GrafischeEditor_DP
 
         // group will not be physical drawed in the drawpanel
         public void Draw(PaintEventArgs e, Rectangle? preview = null) { }
+        public IComponent InnerComponent() => this;
     }
 }

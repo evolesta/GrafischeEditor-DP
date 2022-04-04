@@ -1,35 +1,37 @@
 ﻿using GrafischeEditor_DP.VisitorPattern;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GrafischeEditor_DP.DecoratorPattern
 {
-    public abstract class LabeledComponent : IComponent
+    public abstract class LabeledComponent<T> : IComponent where T : IComponent
     {
-        private readonly IComponent component;
+        private readonly T _component;
 
-        public LabeledComponent(IComponent component)
+        public LabeledComponent(T component)
         {
-            this.component = component;
+            _component = component switch
+            {
+                Figuur or Groep or LabeledComponent<T> => component,
+                _ => throw new InvalidOperationException()
+                
+            };
         }
 
-        public string Name { get => component.Name; set => component.Name = value; }
+        public string Name { get => _component.Name; set => _component.Name = value; }
 
         public string Text { get; set; }
 
-        public ComponentType ComponentType => component.ComponentType;
+        public ComponentType ComponentType => _component.ComponentType;
 
-        public int Id { get => component.Id; set => component.Id = value; }
-        public bool Selected { get => component.Selected; set => component.Selected = value; }
-        public Rectangle Placement { get => component.Placement; set => component.Placement = value; }
+        public int Id { get => _component.Id; set => _component.Id = value; }
+        public bool Selected { get => _component.Selected; set => _component.Selected = value; }
+        public Rectangle Placement { get => _component.Placement; set => _component.Placement = value; }
 
-        public void Accept(IVisitor visitor) => component.Accept(visitor);
+        public void Accept(IVisitor visitor) => _component.Accept(visitor);
 
-        public virtual void Draw(PaintEventArgs e, Rectangle? preview = null) => component.Draw(e, preview);
+        public virtual void Draw(PaintEventArgs e, Rectangle? preview = null) => _component.Draw(e, preview);
+        public IComponent InnerComponent() => _component;
     }
 }

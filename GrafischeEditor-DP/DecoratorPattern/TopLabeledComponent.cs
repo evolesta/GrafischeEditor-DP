@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace GrafischeEditor_DP.DecoratorPattern
 {
-    public class TopLabeledComponent : LabeledComponent
+    public class TopLabeledComponent<T> : LabeledComponent<T> where T : IComponent
     {
-        public TopLabeledComponent(IComponent component) : base(component)
+        public TopLabeledComponent(T component) : base(component)
         {
         }
 

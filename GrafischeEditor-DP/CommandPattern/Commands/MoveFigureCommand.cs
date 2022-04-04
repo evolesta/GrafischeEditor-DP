@@ -13,7 +13,7 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
         {
             _moveX = moveX;
             _moveY = moveY;
-            _figure = controller.GetComponent(id) as Figuur;
+            _figure = controller.GetComponent(id).InnerComponent() as Figuur;
         }
 
         public void Execute()
