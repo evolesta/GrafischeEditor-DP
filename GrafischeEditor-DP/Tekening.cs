@@ -85,7 +85,8 @@ namespace GrafischeEditor_DP
             
             _mouseDragStartPosition = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = _controller.GetAllFiguresFlattened().LastOrDefault(f => f.Placement.Contains(e.Location));
+            var figures = _controller.GetAllFiguresFlattened();
+            var huidigFiguur = figures.LastOrDefault(f => f.Placement.Contains(e.Location));
             if(huidigFiguur is not null) 
                 _modifyingFigureId = huidigFiguur.Id;
 

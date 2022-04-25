@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GrafischeEditor_DP.DecoratorPattern;
-using GrafischeEditor_DP.StrategyPattern;
 
 namespace GrafischeEditor_DP
 {
@@ -77,7 +74,7 @@ namespace GrafischeEditor_DP
                 if (topLevelComponent is not null)
                     return ancestor;
 
-                groepen = ancestor.Groepen;
+                groepen = ancestor.Groepen.Select(c => c.InnerComponent() as Groep);
             }
             
 
@@ -91,7 +88,7 @@ namespace GrafischeEditor_DP
             return null;
         }
 
-        public IEnumerable<Figuur> GetAllFiguresFlattened() => _hoofdGroep.AllFiguresFlattened();
+        public IEnumerable<IComponent> GetAllFiguresFlattened() => _hoofdGroep.AllFiguresFlattened();
 
 
         public int? SelectedGroupId()
@@ -126,7 +123,7 @@ namespace GrafischeEditor_DP
 
             foreach (var subGroep in groep.Groepen)
             {
-                id = SelectedSubgroupIdRecursive(subGroep);
+                id = SelectedSubgroupIdRecursive(subGroep.InnerComponent() as Groep);
             }
 
             return id;
@@ -147,17 +144,25 @@ namespace GrafischeEditor_DP
                 Selected = false
             };
 
-            var dummy = new TopLabeledComponent<Figuur>(figuur);
+            var dummy = new TopLabeledComponent(figuur);
             dummy.Text = "bliep";
+
+            var left = new LeftLabeledComponent(dummy);
+            left.Text = "Links!";
+
+            var bottom = new BottomLabeledComponent(left);
+            bottom.Text = "Onderkantje";
+
+            var right = new RightLabeledComponent(bottom);
 
             if (parentGroupId is null)
             {
-                _hoofdGroep.Children.Add(dummy);
+                _hoofdGroep.Children.Add(right);
             }
             else
             {
                 var parent = GetGroep(parentGroupId.Value);
-                parent.Children.Add(dummy);
+                parent.Children.Add(right);
             }
 
             return newId;
@@ -220,7 +225,7 @@ namespace GrafischeEditor_DP
                 return true;
             }
 
-            return groep.Groepen.Any(subGroup => RemoveComponentFromGroupRecursive(subGroup, id));
+            return groep.Groepen.Any(subGroup => RemoveComponentFromGroupRecursive(subGroup.InnerComponent() as Groep, id));
         }
 
         public void SelectFigure(int id)

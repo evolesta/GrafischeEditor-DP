@@ -5,15 +5,20 @@ using System.Windows.Forms;
 
 namespace GrafischeEditor_DP.DecoratorPattern
 {
-    public abstract class LabeledComponent<T> : IComponent where T : IComponent
+    public abstract class LabeledComponent : IComponent
     {
-        private readonly T _component;
 
-        public LabeledComponent(T component)
+      protected Font DrawFont = new("Arial", 12);
+      protected SolidBrush SolidBrush = new(Color.Black);
+
+
+    private readonly IComponent _component;
+
+        public LabeledComponent(IComponent component)
         {
             _component = component switch
             {
-                Figuur or Groep or LabeledComponent<T> => component,
+                Figuur or Groep or LabeledComponent => component,
                 _ => throw new InvalidOperationException()
                 
             };
@@ -21,7 +26,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
         public string Name { get => _component.Name; set => _component.Name = value; }
 
-        public string Text { get; set; }
+        public string Text { get; set; } = "Dummy";
 
         public ComponentType ComponentType => _component.ComponentType;
 

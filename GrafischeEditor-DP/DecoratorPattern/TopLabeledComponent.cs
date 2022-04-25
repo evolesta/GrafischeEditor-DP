@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace GrafischeEditor_DP.DecoratorPattern
 {
-    public class TopLabeledComponent<T> : LabeledComponent<T> where T : IComponent
+    public class TopLabeledComponent : LabeledComponent
     {
-        public TopLabeledComponent(T component) : base(component)
+        public TopLabeledComponent(IComponent component) : base(component)
         {
         }
 
@@ -13,11 +13,9 @@ namespace GrafischeEditor_DP.DecoratorPattern
         {
             base.Draw(e, preview);
 
-            Font drawFont = new Font("Arial", 16);
-            SolidBrush solidBrush = new SolidBrush(Color.Black);
-            PointF labelPoint = new PointF(Placement.X, Placement.Y + 10);
+            PointF labelPoint = new PointF(Placement.X, Placement.Y - 25);
 
-            e.Graphics.DrawString("Dummy", drawFont, solidBrush, labelPoint);
+            e.Graphics.DrawString("Dummy", DrawFont, SolidBrush, labelPoint);
         }
     }
 }
