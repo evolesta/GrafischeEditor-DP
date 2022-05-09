@@ -26,7 +26,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
         public string Name { get => _component.Name; set => _component.Name = value; }
 
-        public string Text { get; set; } = "Dummy";
+        public string Text { get; set; } 
 
         public ComponentType ComponentType => _component.ComponentType;
 

@@ -327,6 +327,8 @@ namespace GrafischeEditor_DP
                         menu.Items.Add("Groep toevoegen", null, AddChildGroupMenuItemClick);
                     }
 
+                    menu.Items.Add("Bijschriften", null, LabelsMenuItemClick);
+
                     menu.Show(treeView, e.Location); // toon menu aan gebruiker
                     break;
                 }
@@ -341,6 +343,14 @@ namespace GrafischeEditor_DP
                 default:
                     break;
             }
+        }
+
+        private void LabelsMenuItemClick(object? sender, EventArgs e)
+        {
+          var parent = _controller.FindParentGroep(_currentComponent.Id);
+          var form = new EditLabelForm(_currentComponent, parent);
+          form.Closed += (_, _) => Refresh();
+          form.ShowDialog();
         }
 
         private void AddChildGroupMenuItemClick(object? sender, EventArgs e)

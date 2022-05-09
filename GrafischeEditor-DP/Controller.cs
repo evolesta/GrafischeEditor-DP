@@ -64,7 +64,7 @@ namespace GrafischeEditor_DP
             {
                 topLevelComponent = _hoofdGroep.Children.FirstOrDefault(c => c.Id == childId);
                 if (topLevelComponent is not null)
-                    return null;
+                    return HoofdGroep;
 
                 groepen = Groepen().Select(g => g.InnerComponent() as Groep);
             }
@@ -182,12 +182,12 @@ namespace GrafischeEditor_DP
             //get all used Ids:
             var ids = new List<int>();
             foreach (var component in _hoofdGroep.Children)
-                IetsMetIds(ids, component);
+                AddIdsFromChildren(ids, component);
 
             return ids.Max() + 1;
         }
 
-        private void IetsMetIds(List<int> ids, IComponent component)
+        private void AddIdsFromChildren(List<int> ids, IComponent component)
         {
             ids.Add(component.Id);
             if (component is Groep childGroup)
@@ -199,7 +199,7 @@ namespace GrafischeEditor_DP
             var ids = new List<int>();
 
             foreach (var child in groep.Children)
-                IetsMetIds(ids, child);
+                AddIdsFromChildren(ids, child);
 
             return ids;
         }
