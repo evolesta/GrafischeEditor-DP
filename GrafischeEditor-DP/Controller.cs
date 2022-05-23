@@ -144,25 +144,14 @@ namespace GrafischeEditor_DP
                 Selected = false
             };
 
-            var dummy = new TopLabeledComponent(figuur);
-            dummy.Text = "bliep";
-
-            var left = new LeftLabeledComponent(dummy);
-            left.Text = "Links!";
-
-            var bottom = new BottomLabeledComponent(left);
-            bottom.Text = "Onderkantje";
-
-            var right = new RightLabeledComponent(bottom);
-
             if (parentGroupId is null)
             {
-                _hoofdGroep.Children.Add(right);
+                _hoofdGroep.Children.Add(figuur);
             }
             else
             {
                 var parent = GetGroep(parentGroupId.Value);
-                parent.Children.Add(right);
+                parent.Children.Add(figuur);
             }
 
             return newId;

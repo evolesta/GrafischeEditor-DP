@@ -16,5 +16,21 @@ namespace GrafischeEditor_DP.DecoratorPattern
       var labelPoint = new PointF(Placement.X + Placement.Width + 5, Placement.Y + Placement.Height / 2);
       e.Graphics.DrawString(Text, DrawFont, SolidBrush, labelPoint);
     }
+
+    public override bool TryGetLabel(LabelDirection direction, out LabeledComponent component)
+    {
+
+      if (direction == LabelDirection.Right)
+      {
+        component = this;
+        return true;
+      }
+      else
+      {
+        component = null;
+        return _component is LabeledComponent labeledComponent &&
+               labeledComponent.TryGetLabel(direction, out component);
+      }
+    }
   }
 }

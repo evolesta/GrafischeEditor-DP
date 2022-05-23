@@ -1,5 +1,6 @@
 ﻿using GrafischeEditor_DP.VisitorPattern;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,7 +13,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
       protected SolidBrush SolidBrush = new(Color.Black);
 
 
-    private readonly IComponent _component;
+    protected readonly IComponent _component;
 
         public LabeledComponent(IComponent component)
         {
@@ -38,5 +39,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
         public virtual void Draw(PaintEventArgs e, Rectangle? preview = null) => _component.Draw(e, preview);
         public IComponent InnerComponent() => _component;
+    
+        public abstract bool TryGetLabel(LabelDirection direction, out LabeledComponent component);
     }
 }

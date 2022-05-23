@@ -15,7 +15,23 @@ namespace GrafischeEditor_DP.DecoratorPattern
 
             PointF labelPoint = new PointF(Placement.X, Placement.Y - 25);
 
-            e.Graphics.DrawString("Dummy", DrawFont, SolidBrush, labelPoint);
-        }
+            e.Graphics.DrawString(Text, DrawFont, SolidBrush, labelPoint);
     }
+
+        public override bool TryGetLabel(LabelDirection direction, out LabeledComponent component)
+        {
+
+          if (direction == LabelDirection.Top)
+          {
+            component = this;
+            return true;
+          }
+          else
+          {
+            component = null;
+            return _component is LabeledComponent labeledComponent &&
+                   labeledComponent.TryGetLabel(direction, out component);
+          }
+        }
+  }
 }

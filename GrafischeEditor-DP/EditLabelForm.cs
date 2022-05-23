@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using GrafischeEditor_DP.CommandPattern;
+using GrafischeEditor_DP.CommandPattern.Commands;
 using GrafischeEditor_DP.DecoratorPattern;
 
 namespace GrafischeEditor_DP
@@ -8,11 +10,13 @@ namespace GrafischeEditor_DP
   {
     private readonly IComponent _originalComponent;
     private readonly Groep _parent;
+    private readonly Invoker _invoker;
 
-    public EditLabelForm(IComponent originalComponent, Groep parent)
+    public EditLabelForm(IComponent originalComponent, Groep parent, Invoker invoker)
     {
       _originalComponent = originalComponent;
       _parent = parent;
+      _invoker = invoker;
 
       Text = "Label toevoegen";
 
@@ -37,20 +41,9 @@ namespace GrafischeEditor_DP
     private void SubmitLabelButtonClick(object? sender, EventArgs e)
     {
       var dir = (LabelDirection)DirectionSelector.SelectedIndex;
-
-      LabeledComponent labeledComponent = dir switch
-      {
-        LabelDirection.Left => new LeftLabeledComponent(_originalComponent),
-        LabelDirection.Right => new RightLabeledComponent(_originalComponent),
-        LabelDirection.Top => new TopLabeledComponent(_originalComponent),
-        LabelDirection.Bottom => new BottomLabeledComponent(_originalComponent),
-        _ => throw new ArgumentOutOfRangeException()
-      };
-
-      labeledComponent.Text = TextBox.Text;
-
-      if(_parent.Children.Remove(_originalComponent))
-        _parent.Children.Add(labeledComponent);
+      var cmd = new SetLabelCommand(TextBox.Text, dir, _originalComponent, _parent);
+      _invoker.SetCommand(cmd);
+      _invoker.Execute();
 
       Close();
     }

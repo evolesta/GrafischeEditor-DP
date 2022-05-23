@@ -348,7 +348,7 @@ namespace GrafischeEditor_DP
         private void LabelsMenuItemClick(object? sender, EventArgs e)
         {
           var parent = _controller.FindParentGroep(_currentComponent.Id);
-          var form = new EditLabelForm(_currentComponent, parent);
+          var form = new EditLabelForm(_currentComponent, parent, _invoker);
           form.Closed += (_, _) => Refresh();
           form.ShowDialog();
         }
