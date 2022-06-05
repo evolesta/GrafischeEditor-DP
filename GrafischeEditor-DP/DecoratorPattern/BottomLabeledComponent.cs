@@ -32,5 +32,7 @@ namespace GrafischeEditor_DP.DecoratorPattern
                labeledComponent.TryGetLabel(direction, out component);
       }
     }
+
+    public override LabelDirection Direction => LabelDirection.Bottom;
   }
 }

@@ -41,5 +41,6 @@ namespace GrafischeEditor_DP.DecoratorPattern
         public IComponent InnerComponent() => _component;
     
         public abstract bool TryGetLabel(LabelDirection direction, out LabeledComponent component);
+        public abstract LabelDirection Direction { get; }
     }
 }

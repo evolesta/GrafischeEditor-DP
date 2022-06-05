@@ -6,9 +6,8 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
 {
   internal class SetLabelCommand : ICommand
   {
-    private bool _isNewDirection;
-    private string _originalText;
-
+    private readonly bool _hasExistingLabelInDirection;
+    private readonly string _originalText;
     private readonly string _text;
     private readonly LabelDirection _direction;
     private readonly IComponent _originalComponent;
@@ -18,21 +17,30 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
     {
       _text = text;
       _direction = direction;
-      _originalComponent = originalComponent;
+      if (originalComponent is LabeledComponent labeledComponent &&
+          labeledComponent.TryGetLabel(_direction, out var originalLabel))
+      {
+        _hasExistingLabelInDirection = true;
+        _originalText = originalLabel.Text;
+        _originalComponent = originalLabel;
+      }
+      else
+      {
+        _originalComponent = originalComponent;
+      }
       _parent = parent;
     }
 
     public void Execute()
     {
-      if (_originalComponent is LabeledComponent labeledComponent &&
-          labeledComponent.TryGetLabel(_direction, out var newLabeledComponent))
+      if (_hasExistingLabelInDirection)
       {
-        _originalText = newLabeledComponent.Text;
+        (_originalComponent as LabeledComponent)!.Text = _text;
       }
       else
       {
-        //No label present in the given direction, so we create a new one. 
-        newLabeledComponent = _direction switch
+        // No label present in the given direction, so we create a new one ...
+        LabeledComponent newLabel = _direction switch
         {
           LabelDirection.Left => new LeftLabeledComponent(_originalComponent),
           LabelDirection.Right => new RightLabeledComponent(_originalComponent),
@@ -40,30 +48,26 @@ namespace GrafischeEditor_DP.CommandPattern.Commands
           LabelDirection.Bottom => new BottomLabeledComponent(_originalComponent),
           _ => throw new ArgumentOutOfRangeException()
         };
-        _isNewDirection = true;
+        newLabel.Text = _text;
+
+        // ... and replace the original in the containing group. 
+        if (_parent.Children.Remove(_originalComponent))
+          _parent.Children.Add(newLabel);
       }
-
-      newLabeledComponent.Text = _text;
-
-      if (_isNewDirection && _parent.Children.Remove(_originalComponent))
-        _parent.Children.Add(newLabeledComponent);
     }
 
     public void Undo()
     {
       var fromParent = _parent.Children.First(c => c.Id == _originalComponent.Id);
 
-      if (_isNewDirection)
+      if (_hasExistingLabelInDirection)
       {
-        if (_parent.Children.Remove(fromParent))
-        {
-          _parent.Children.Add(_originalComponent);
-        }
+        (_originalComponent as LabeledComponent)!.Text = _originalText;
       }
       else
       {
-        var label = fromParent as LabeledComponent;
-        label!.Text = _originalText;
+        if (_parent.Children.Remove(fromParent))
+          _parent.Children.Add(_originalComponent);
       }
     }
   }
