@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -86,7 +85,8 @@ namespace GrafischeEditor_DP
             
             _mouseDragStartPosition = e.Location; // bewaar X Y positie startpunt
 
-            var huidigFiguur = _controller.GetAllFiguresFlattened().LastOrDefault(f => f.Placement.Contains(e.Location));
+            var figures = _controller.GetAllFiguresFlattened();
+            var huidigFiguur = figures.LastOrDefault(f => f.Placement.Contains(e.Location));
             if(huidigFiguur is not null) 
                 _modifyingFigureId = huidigFiguur.Id;
 
@@ -213,14 +213,10 @@ namespace GrafischeEditor_DP
         private void DrawPanel_Paint(object sender, PaintEventArgs e)
         {
             // verkrijg lijst met n figuren en print ieder figuur op het scherm
-            foreach (var figuur in _controller.Figuren())
+            foreach (var component in _controller.GetComponents())
             {
-                figuur.Draw(e);
-            }
-
-            foreach (var groep in _controller.Groepen())
-            {
-                DrawFiguresRecursive(groep, e);
+                if(component is not null)
+                    component.Draw(e);
             }
 
             FillTreeview(); // genereer TreeView met figuren
@@ -246,15 +242,6 @@ namespace GrafischeEditor_DP
                 var preview = ResizeRectangle(figure.Placement);
                 figure.Draw(e, preview);
             }
-        }
-
-        private void DrawFiguresRecursive(Groep groep, PaintEventArgs e)
-        {
-            foreach (var figuur in groep.Figuren) 
-                figuur.Draw(e);
-
-            foreach (var subGroep in groep.Groepen) 
-                DrawFiguresRecursive(subGroep, e);
         }
 
 
@@ -340,6 +327,8 @@ namespace GrafischeEditor_DP
                         menu.Items.Add("Groep toevoegen", null, AddChildGroupMenuItemClick);
                     }
 
+                    menu.Items.Add("Bijschriften", null, LabelsMenuItemClick);
+
                     menu.Show(treeView, e.Location); // toon menu aan gebruiker
                     break;
                 }
@@ -354,6 +343,14 @@ namespace GrafischeEditor_DP
                 default:
                     break;
             }
+        }
+
+        private void LabelsMenuItemClick(object? sender, EventArgs e)
+        {
+          var parent = _controller.FindParentGroep(_currentComponent.Id);
+          var form = new EditLabelForm(_currentComponent, parent, _invoker);
+          form.Closed += (_, _) => Refresh();
+          form.ShowDialog();
         }
 
         private void AddChildGroupMenuItemClick(object? sender, EventArgs e)

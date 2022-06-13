@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 
 namespace GrafischeEditor_DP.VisitorPattern
 {
@@ -37,7 +38,7 @@ namespace GrafischeEditor_DP.VisitorPattern
                     Width = figuur.Placement.Width
                 };
             }
-            foreach (var subGroep in groep.Groepen)
+            foreach (var subGroep in groep.Groepen.Select(c => c.InnerComponent() as Groep))
             {
                 MoveAllFiguresInGroupRecursive(subGroep);
             }

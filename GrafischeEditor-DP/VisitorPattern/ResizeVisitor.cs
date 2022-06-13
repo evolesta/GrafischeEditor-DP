@@ -22,23 +22,19 @@ namespace GrafischeEditor_DP.VisitorPattern
         {
             var figures = element.AllFiguresFlattened().ToArray();
 
-            var groupX = figures.Min(f => f.Placement.X);
-            var groupY = figures.Min(f => f.Placement.Y);
-
-            var oldGroupWidth = figures.Max(f => f.Placement.X) - groupX;
-            var newGroupWidth = _newPosition.X - groupX;
-            var ratio = (float)newGroupWidth / oldGroupWidth;
+            var newGroupWidth = _newPosition.X - element.Placement.X;
+            var ratio = (float)newGroupWidth / element.Placement.Width;
 
             foreach (var figure in figures)
             {
-                var originalRelativeX = figure.Placement.X - groupX;
-                var originalRelativeY = figure.Placement.Y - groupY;
+                var originalRelativeX = figure.Placement.X - element.Placement.X;
+                var originalRelativeY = figure.Placement.Y - element.Placement.Y;
 
                 var newRelativeX = (int)Math.Floor(originalRelativeX * ratio);
                 var newRelativeY = (int)Math.Floor(originalRelativeY * ratio);
 
-                var newX = groupX + newRelativeX;
-                var newY = groupY + newRelativeY;
+                var newX = element.Placement.X + newRelativeX;
+                var newY = element.Placement.Y + newRelativeY;
 
                 var newWidth = (int)Math.Floor(figure.Placement.Width * ratio);
                 var newHeight = (int)Math.Floor(figure.Placement.Height * ratio);
